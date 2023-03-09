@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "Haipls",
+  "risk": "3",
+  "title": " Incorrect points weight calculation on BYTES stake , 200 point per BYTES instead 200 BYTES per point",
+  "issueId": 12,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/12"
+}
