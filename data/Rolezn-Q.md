@@ -9,8 +9,9 @@
 | [LOW&#x2011;4](#LOW&#x2011;4) | Contracts are not using their OZ Upgradeable counterparts | 3 |
 | [LOW&#x2011;5](#LOW&#x2011;5) | Unbounded loop | 2 |
 | [LOW&#x2011;6](#LOW&#x2011;6) | Upgrade OpenZeppelin Contract Dependency | 2 |
+| [LOW&#x2011;7](#LOW&#x2011;7) | Missing Non Reentrancy Modifiers | 1 |
 
-Total: 20 contexts over 6 issues
+Total: 21 contexts over 7 issues
 
 ### Non-critical Issues
 | |Issue|Contexts|
@@ -172,6 +173,19 @@ https://github.com/code-423n4/2023-03-neotokyo/tree/main/contracts/../package.js
 Update OpenZeppelin Contracts Usage in package.json and require at least version of 4.8.1 via `>=4.8.1`
 
 
+
+### <a href="#Summary">[LOW&#x2011;7]</a><a name="LOW&#x2011;7"> Missing Non Reentrancy Modifiers
+The `claimReward` is missing `nonrenonReentrantentrant` modifier although some other public/external functions does use the `nonReentrant` modifer such as `stake` and `withdraw`. It seems like the `claimReward` function should have the `nonReentrant` modifier as the other functions have it as well.
+
+#### <ins>Proof Of Concept</ins>
+
+```solidity
+function claimReward (
+        address _recipient
+    ) external returns (uint256, uint256) {
+```
+
+https://github.com/code-423n4/2023-03-neotokyo/tree/main/contracts/staking/NeoTokyoStaker.sol#L1409
 
 ## Non Critical Issues
 
