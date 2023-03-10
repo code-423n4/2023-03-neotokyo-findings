@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "UdarTeam",
+  "risk": "3",
+  "title": "Division before multiplication incurs unnecessary precision loss",
+  "issueId": 33,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/33"
+}
