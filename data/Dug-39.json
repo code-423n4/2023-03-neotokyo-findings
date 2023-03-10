@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "Dug",
+  "risk": "2",
+  "title": "Loss of precision in calculating LP points results in non-rewarded stakes",
+  "issueId": 39,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/39"
+}
