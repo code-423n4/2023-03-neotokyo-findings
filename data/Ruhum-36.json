@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "Ruhum",
+  "risk": "3",
+  "title": "Rewards can't be claimed because of an underflow in `getPoolReward()`",
+  "issueId": 36,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/36"
+}
