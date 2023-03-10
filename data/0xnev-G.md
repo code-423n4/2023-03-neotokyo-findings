@@ -222,6 +222,8 @@ Cache `stakedS2[_recipient]` in local storage
 766:	function _assetTransferFrom
 796:	function _assetTransfer
 ```
+Description:
+Before execution of `transfer` functions, we should check if amount is zero to prevent wastage of gas when `transfer` functions do not do anything upon execution
 
 ### [G-06] Avoid using stack variable when state variable is only used once
 ```solidity
