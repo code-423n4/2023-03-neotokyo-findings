@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "koxuan",
+  "risk": "2",
+  "title": "precision loss due to divide before multiplication can lead to lesser points added when staking lp",
+  "issueId": 74,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/74"
+}
