@@ -61,3 +61,20 @@ function stake (
 		}
 
 ```
+
+QA5. The ``configureVaultCreditMultipliers()`` fails to check whether the two inputs arrays have equal length: 
+
+
+Mitigation:
+```diff
+function configureVaultCreditMultipliers (
+		string[] memory _vaultCreditMultipliers,
+		uint256[] memory _multipliers
+	) hasValidPermit(UNIVERSAL, CONFIGURE_CREDITS) external {
++               if(_vaultCreditMultipliers.length != _multipliers) revert ArraysNotEqualInLength();
+		for (uint256 i; i < _vaultCreditMultipliers.length; ) {
+			vaultCreditMultiplier[_vaultCreditMultipliers[i]] = _multipliers[i];
+			unchecked { ++i; }
+		}
+	}
+```
