@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "aashar",
+  "risk": "2",
+  "title": "getReward in Bytes2.sol can be called by anyone",
+  "issueId": 63,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/63"
+}
