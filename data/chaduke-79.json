@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "chaduke",
+  "risk": "2",
+  "title": "_stakeLP has a divide-before-multiply precision loss problem.",
+  "issueId": 79,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/79"
+}
