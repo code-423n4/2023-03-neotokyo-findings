@@ -78,3 +78,27 @@ function configureVaultCreditMultipliers (
 		}
 	}
 ```
+
+QA6. The ``configureIdentityCreditYields()`` fails to check whether the two inputs arrays have equal length: 
+
+```diff
+function configureIdentityCreditYields (
+		uint256[] memory _citizenRewardRates, 
+		string[] memory _vaultRewardRates,
+		string[] memory _identityCreditYields
+	) hasValidPermit(UNIVERSAL, CONFIGURE_CREDITS) external {
++    uint len1 = _citizenRewardRates.length;
++    uint len2 = _vaultRewardRates.length;
++    uint len3 = _identityCreditYields;
++    if(!(len1 == len2 && len2 == len3)) revert ArraysNotEqualInLength();
+		for (uint256 i; i < _citizenRewardRates.length; ) {
+			identityCreditYield[
+				_citizenRewardRates[i]
+			][
+				_vaultRewardRates[i]
+			] = _identityCreditYields[i];
+			unchecked { ++i; }
+		}
+	}
+```
+
