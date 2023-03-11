@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "aashar",
+  "risk": "3",
+  "title": "Staker can reap more rewards even after their staking period by keeping it staked after the timelocked period.",
+  "issueId": 66,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/66"
+}
