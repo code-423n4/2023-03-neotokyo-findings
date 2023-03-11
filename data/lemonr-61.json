@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "lemonr",
+  "risk": "2",
+  "title": "Wraparound (Integer overflow)",
+  "issueId": 61,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/61"
+}
