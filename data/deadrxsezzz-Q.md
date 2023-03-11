@@ -40,3 +40,18 @@ import {MerkleProofLib} from "solmate/utils/MerkleProofLib.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";  
 import {ERC1155, ERC1155TokenReceiver} from "solmate/tokens/ERC1155.sol";  
 import {toWadUnsafe, toDaysWadUnsafe} from "solmate/utils/SignedWadMath.sol";  ``
+
+# Missing @return NatSpec comments
+
+The following function misses a NatSpec @return comment
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1264
+
+Some code analysis programs do analysis by reading NatSpec details, if they can’t see the “@return” tag, they do incomplete analysis.
+
+# Showing the actual values of numbers in NatSpec comments makes checking and reading code easier
+
+In cases such as `uint256 constant private _PRECISION = 1e12;` write a comment to make reading by other devs easier, e.g `uint256 constant private _PRECISION = 1e12; // 1_000_000_000_000`
+
+
+# Missing checks for accidentally sending tokens to address(0x0) in `function _assetTransferFrom` and `function _assetTransfer`
+
