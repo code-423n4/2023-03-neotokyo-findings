@@ -39,3 +39,25 @@ Correction, exclude ``_assetType == 4``:
 		}
 ```
 
+QA4. The ``stake()`` function fails to exclude the case ``_assetType == 4``.
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1196-L1207
+
+correction: exclude ``_assetType == 4``
+
+```diff
+function stake (
+		AssetType _assetType,
+		uint256 _timelockId,
+		uint256,
+		uint256,
+		uint256
+	) external nonReentrant {
+
+		// Validate that the asset being staked is of a valid type.
+-		if (uint8(_assetType) > 4) {
++		if (uint8(_assetType) >= 4) {
+			revert InvalidAssetType(uint256(_assetType));
+		}
+
+```
