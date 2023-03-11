@@ -1,7 +1,7 @@
 ## Use latest Solidity version with a stable pragma statement
 [BYTES2.sol](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L2), [NeoTokyoStaker.sol](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L2)
 
-## No need to use `if else` pattern
+## No need to use `if else` statement
 NeoTokyoStaker.sol - [689-700](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L693-L699)
 Refactored code:
 ```
