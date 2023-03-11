@@ -23,3 +23,19 @@ if (!success) {
       }     
 }
 ```
+
+QA3. ``withdraw()`` should not allow ``_assetType == 4`` since it is not defined. 
+
+``withdraw()`` does not exclude ``_assetType == 4``, although it is not defined. 
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1668-L1670
+
+Correction, exclude ``_assetType == 4``:
+
+```diff
+- if (uint8(_assetType) == 2 || uint8(_assetType) > 4) {
++ if (uint8(_assetType) == 2 || uint8(_assetType) >= 4) {
+			revert InvalidAssetType(uint256(_assetType));
+		}
+```
+
