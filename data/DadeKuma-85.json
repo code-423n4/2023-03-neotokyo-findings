@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "DadeKuma",
+  "risk": "3",
+  "title": "Users can't upgrade their BYTE1 to BYTES2 in any way if they aren't BYTES1 admins",
+  "issueId": 85,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/85"
+}
