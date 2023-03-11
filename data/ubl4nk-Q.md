@@ -9,6 +9,7 @@ enum AssetType {
 }
 ```
 There is one mistake while checking the type of asset (line https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1205)
+(line https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1668)
 ```
 if (uint8(_assetType) > 4) {
 	revert InvalidAssetType(uint256(_assetType));
