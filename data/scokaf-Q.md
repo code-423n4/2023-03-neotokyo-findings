@@ -190,3 +190,27 @@ Add to Blacklist function and modifier.
         _;
     }
 
+# 7: NATSPEC COMMENTS SHOULD BE INCREASED IN CONTRACTS
+
+Vulnerability details
+
+## Context:
+
+All Contracts
+
+> ***Description:***
+
+It is recommended that Solidity contracts are fully annotated using NatSpec for all public interfaces (everything in the ABI). It is clearly stated in the Solidity official documentation.
+In complex projects such as Defi, the interpretation of all functions and their arguments and returns is important for code readability and auditability.
+
+For reference, see https://docs.soliditylang.org/en/v0.8.15/natspec-format.html
+
+## Tools Used
+
+Manual Analysis
+
+### Recommended Mitigation Steps
+
+NatSpec comments should be increased in contracts.
+
+
