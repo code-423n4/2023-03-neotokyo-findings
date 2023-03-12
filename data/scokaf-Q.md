@@ -244,3 +244,30 @@ Manual Analysis
 
 Replace constant private with private constant.
 
+
+# 9: IMPORTS CAN BE GROUPED TOGETHER
+
+Vulnerability details
+
+## Context:
+
+Imports can be grouped together
+
+## Proof of Concept
+
+ > ***File: BYTES2.sol***
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L4-L9
+
+ > ***File: NeoTokyoStaker.sol***
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L4-L8
+
+## Tools Used
+
+Manual Analysis
+
+### Recommended Mitigation Steps
+
+Consider importing OZ first, then all interfaces, then all utils.
+
