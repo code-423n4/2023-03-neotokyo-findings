@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "Cryptor",
+  "risk": "3",
+  "title": "A user can withdraw tokens without reducing his LP position stake ",
+  "issueId": 116,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/116"
+}
