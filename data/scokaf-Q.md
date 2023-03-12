@@ -214,3 +214,33 @@ Manual Analysis
 NatSpec comments should be increased in contracts.
 
 
+# 8: USE PRIVATE CONSTANT CONSISTENTLY
+
+Vulnerability details
+
+## Context:
+
+Use private constant consistently.
+
+## Proof of Concept
+
+ > ***File: NeoTokyoStaker.sol***
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L191
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L194
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L197
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L200
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L203 
+
+## Tools Used
+
+Manual Analysis
+
+### Recommended Mitigation Steps
+
+Replace constant private with private constant.
+
