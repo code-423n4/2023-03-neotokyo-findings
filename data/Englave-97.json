@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "Englave",
+  "risk": "2",
+  "title": "Transaction ran out of gas in case of large iterations",
+  "issueId": 97,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/97"
+}
