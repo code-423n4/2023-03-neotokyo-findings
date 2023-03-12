@@ -271,3 +271,43 @@ Manual Analysis
 
 Consider importing OZ first, then all interfaces, then all utils.
 
+# 10: USE CONSTANTS FOR NUMBERS
+
+Vulnerability details
+
+## Context:
+
+In several locations in the code, numbers like 1e12, 1e18, and 0x20 are used. The same goes for values like type(uint256).max It is pretty easy to make a mistake somewhere, also when comparing values.
+
+## Proof of Concept
+
+ > ***File: NeoTokyoStaker.sol***
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L197 
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L203 
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1155 
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1623 
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L842 
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L845 
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L847-L848 
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L963 
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1017 
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1141 
+
+## Tools Used
+
+Manual Analysis
+
+### Recommended Mitigation Steps
+
+We recommend defining constants for the above numbers used throughout the code.
+
