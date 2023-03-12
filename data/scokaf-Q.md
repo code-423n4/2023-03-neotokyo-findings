@@ -79,3 +79,35 @@ Manual Analysis
 Use a non-legacy and more battle-tested version
 
 Use 0.8.10
+
+
+# 3: LOCK PRAGMAS TO SPECIFIC COMPILER VERSION
+
+Vulnerability details
+
+## Context:
+
+Pragma statements can be allowed to float when a contract is intended for consumption by other developers, as in the case of contracts in a library or EthPM package. Otherwise, the developer would need to manually update the pragma in order to compile locally.
+
+For reference, see https://swcregistry.io/docs/SWC-103
+
+
+## Proof of Concept
+
+ > ***File: BYTES2.sol***
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L2 
+
+ > ***File: NeoTokyoStaker.sol***
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L2 
+
+## Tools Used
+
+Manual Analysis
+
+### Recommended Mitigation Steps
+
+Ethereum Smart Contract Best Practices - Lock pragmas to specific compiler versions. 
+
+For reference, see https://consensys.github.io/smart-contract-best-practices/development-recommendations/solidity-specific/locking-pragmas/
