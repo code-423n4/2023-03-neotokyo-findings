@@ -1,5 +1,5 @@
-#Redundant Calculation
-In the contract `NeoTokyoStaker`, the `_stakeS2Citizen()` function calculate `points` with the below statement:
+# Redundant Calculation
+In the contract `NeoTokyoStaker`, the `_stakeS2Citizen()` function calculates `points` with the below statement:
 ```Solidity
 	uint256 constant private _DIVISOR = 100;
 	function _stakeS2Citizen (
@@ -10,7 +10,7 @@ In the contract `NeoTokyoStaker`, the `_stakeS2Citizen()` function calculate `po
 	...
 	}
 ```
-However, the constant variable `_DIVISOR` equals 100, so, we can directly replace the above calculation for `points` with the below state statement to save gas:
+Since the constant variable `_DIVISOR` equals 100, we can directly replace the above calculation for `points` with the below state statement to save gas:
 ```Solidity
 	citizenStatus.points = timelockMultiplier;
 ```
