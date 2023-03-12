@@ -111,3 +111,52 @@ Manual Analysis
 Ethereum Smart Contract Best Practices - Lock pragmas to specific compiler versions. 
 
 For reference, see https://consensys.github.io/smart-contract-best-practices/development-recommendations/solidity-specific/locking-pragmas/
+
+# 4: GENERATE PERFECT CODE HEADERS EVERY TIME					
+
+Vulnerability details
+
+## Context:
+
+We recommend using a header for Solidity code layout and readability
+
+For reference, see https://github.com/transmissions11/headers
+
+## Proof of Concept
+
+All Contracts
+
+ /*//////////////////////////////////////////////////////////////
+                           TESTING 123
+//////////////////////////////////////////////////////////////*/
+
+
+## Tools Used
+
+Manual Analysis
+
+# 5: FUNCTION WRITING THAT DOES NOT COMPLY WITH THE SOLIDITY STYLE GUIDE
+
+Vulnerability details
+
+## Context:
+
+> ***File: Both Contracts On Scope***
+
+Order of Functions; ordering helps readers identify which functions they can call and to find the constructor and fallback definitions easier. But there are contracts in the project that do not comply with this.
+
+For reference, see https://docs.soliditylang.org/en/v0.8.17/style-guide.html
+
+## Proof of Concept
+
+> ***Functions should be grouped according to their visibility and ordered:***
+
+-constructor
+-receive function (if exists)
+-fallback function (if exists)
+-external
+-public
+-internal
+-private
+-within a grouping, place the view and pure functions last
+
