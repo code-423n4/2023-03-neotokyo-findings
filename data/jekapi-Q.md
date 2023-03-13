@@ -1,0 +1,10 @@
+# Low rated findings
+
+## 1. Protocol inconsistency with S1 citizen vaults
+When staking S1 citizens, their vault influences the points calculation for staking rewards. User can also attach non-component vaults to S1 citizens when staking. When [calculating the credit yield for the citizen](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L939,L942) only component vaults are counted since `citizenVaultId` (non-zero only for component vaults) is passed to the function instead of `vaultId` (which is correct for both component and non-component vaults). This means the staker will receive more rewards by disassembling the citizen and recreating it with the attached vault.
+
+ ## 2. Function `getReward` can be called for any address
+ The function for claiming staking rewards in [BYTES2.sol#L114](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L114) can be called with any `_to` address including `address(0)` and other users. It is unclear why this is not limited to `msg.sender` only (which is consistent with all `_to` values used in the code base) and there is no check that `_to` is not the zero address (which is not a risk because `_mint` will revert after rewards are calculated).
+
+ ## 3. Asset type validation is incorrect
+ In `stake(...)` & `withdraw(...)` the first check for asset type allows 4 (only fails for types strictly larger than 4) which is an "off-by-1" error. This check has no impact because EVM will panic when `_assetType` is out of enum bounds. Relevant code areas: [NeoTokyoStaker.sol#L1205](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1205) and [NeoTokyoStaker.sol#L1668](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1668).
