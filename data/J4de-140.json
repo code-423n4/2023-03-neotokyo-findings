@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "J4de",
+  "risk": "3",
+  "title": "The integer overflow in the `_withdrawLP` function allows the attacker to obtain all the rewards in the pool at zero cost",
+  "issueId": 140,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/140"
+}
