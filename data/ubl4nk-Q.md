@@ -32,7 +32,7 @@ if (uint8(_assetType) >= 4) {
 	revert InvalidAssetType(uint256(_assetType));
 }
 ```
----------------------------------------------------------------------
+
 # Number 2
 Check: ```divide-before-multiply```
 Severity: ```Medium```
@@ -57,3 +57,8 @@ line : https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801
 NeoTokyoStaker._withdrawLP() (contracts/staking/NeoTokyoStaker.sol#1597-1644) performs a multiplication on the result of a division:
 	- points = amount * 100 / 1e18 * lpPosition.multiplier / _DIVISOR (contracts/staking/NeoTokyoStaker.sol#1623)
 ```
+# Number 3
+```Pragma version^0.8.19 (contracts/staking/BYTES2.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.16```
+```Pragma version^0.8.19 (contracts/staking/NeoTokyoStaker.sol#2) necessitates a version too recent to be trusted. Consider deploying with 0.6.12/0.7.6/0.8.16```
+```solc-0.8.19 is not recommended for deployment```
+Reference: https://github.com/crytic/slither/wiki/Detector-Documentation#incorrect-versions-of-solidity
