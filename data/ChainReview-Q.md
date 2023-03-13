@@ -76,7 +76,7 @@ https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTo
 
 Solidity's integer division truncates and therefore performing division before multiplication can lead to precision loss.
 
-For example, $a/b * c/d$ will equal to 0 if either $b>a$ or $d>c$, but it would not be necessarily be the case when using $(a*c) / (c*d)$ instead.
+For example, $a/b * c/d$ will equal to 0 if either $b>a$ or $d>c$, but it would not be necessarily be the case when using $(a*c) / (b*d)$ instead.
 
 In the `_stakeLP()` function for example, if the amount is less then `1e16`, the result will equal 0. The code could be rewritten as 
 
