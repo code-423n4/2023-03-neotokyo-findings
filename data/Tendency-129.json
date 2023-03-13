@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "Tendency",
+  "risk": "2",
+  "title": "An Attacker Can Cause a DOS by Calling Into BYTE2.UgradeBytes function with 0 BYTES 1.0",
+  "issueId": 129,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/129"
+}
