@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "santipu_",
+  "risk": "2",
+  "title": "Unbounded loops in getPoolReward() function can lead to Dos when calling stake() and withdraw()",
+  "issueId": 151,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/151"
+}
