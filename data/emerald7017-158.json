@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "emerald7017",
+  "risk": "3",
+  "title": "Address substitution vulnerability in getCreditYield function.",
+  "issueId": 158,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/158"
+}
