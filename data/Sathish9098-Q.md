@@ -29,6 +29,17 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L173-L177)  
 
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+       598: BYTES = _bytes;
+       599: S1_CITIZEN = _s1Citizen;
+       600: S2_CITIZEN = _s2Citizen;
+       601: LP = _lpToken;
+       602: IDENTITY = _identity;
+       603: VAULT = _vault;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L598-L603)
+
 Recommended Mitigation:
  
 Add address(0) checks before assigning value to state variables 
@@ -67,6 +78,13 @@ Replace _mint() with _safeMint()
 
 ### [3] LACK OF CHECKS THE INTEGER RANGES
 
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+     604: VAULT_CAP = _vaultCap;
+     605: NO_VAULT_CAP = _noVaultCap;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L604-L605)
+
 FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
 _amountis not checked to be != 0 before calling the _burn()
@@ -75,6 +93,7 @@ _amountis not checked to be != 0 before calling the _burn()
    _burn(_from, _amount);
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L140-L144)
+
 
 ##
 
@@ -100,11 +119,97 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L173-L177)
 
+     function configureLP (
+		address _lp
+	) external hasValidPermit(UNIVERSAL, CONFIGURE_LP) {
+		if (lpLocked) {
+			revert LockedConfigurationOfLP();
+		}
+		LP = _lp;
+	}
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1708-L1715)
+
+     
+
+##
+
+### [5] LOSS OF PRECISION DUE TO ROUNDING
+
+Rounding is a process of approximating a number by replacing it with a nearby value that has fewer digits. In computing, rounding is often used to reduce the number of decimal places or significant digits in a calculation to a level that is appropriate for the context in which the result will be used. However, rounding can lead to a loss of precision in the calculation, which can be a problem in some situations
+
+For example, suppose we want to calculate the average of two numbers, 1.23456789 and 9.87654321, to two decimal places. The exact answer is 5.55555555, but if we round each number to two decimal places before averaging, we get 1.23 and 9.88, which give an average of 5.555. This answer is less precise than the exact answer, and the error introduced by rounding can accumulate in more complex calculations
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+       968: citizenStatus.points = identityPoints * vaultMultiplier * timelockMultiplier /_DIVISOR / _DIVISOR;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L968-L970)
+
+     1022: citizenStatus.points = 100 * timelockMultiplier / _DIVISOR;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1022)
+
+    1077: uint256 bonusPoints = (amount * 100 / _BYTES_PER_POINT);
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1077)
+
+   1155: uint256 points = amount * 100 / 1e18 * timelockMultiplier / _DIVISOR;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1155)
+
+    1388: uint256 share = points * _PRECISION / pool.totalPoints * totalReward;
+    1389: uint256 daoShare = share * pool.daoTax / (100 * _DIVISOR);
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1388-L1389)
+
+   1623: uint256 points = amount * 100 / 1e18 * lpPosition.multiplier / _DIVISOR;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1623)
+
+##
+
+### [6] Use OpenZeppelin safeCast library instead of normal casting
+
+The SafeCast library provides a set of functions for safely casting between integer types in Solidity. These functions perform various checks to prevent integer overflows and underflows that can occur when performing type conversions
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+  1205: if (uint8(_assetType) > 4) { //@audit uint8 safecast
+
+  1206: revert InvalidAssetType(uint256(_assetType));  //@audit uint256 safecast
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1205-L1206)
+
+   1211: revert UnconfiguredPool(uint256(_assetType));
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1211)
+
+  1216: revert InactivePool(uint256(_assetType));
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1216)
+
+  1222: revert InvalidTimelockOption(uint256(_assetType), _timelockId);
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1222)
+
+  1307: revert InvalidAssetType(uint256(_assetType));
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1301)
+
+    1668: if (uint8(_assetType) == 2 || uint8(_assetType) > 4) {
+    1669: revert InvalidAssetType(uint256(_assetType));
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1668-L1669)
+
+##
+
+### 
+
+  
 
 
 
-
-
+  
 
 # NONCRITICAL FINDINGS ()
 
@@ -125,6 +230,15 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L4-L9)
 
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+    import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+    import "../access/PermitControl.sol";
+    import "../interfaces/IByteContract.sol";
+    import "../interfaces/IGenericGetter.sol";
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L4-L8)
+
 ##
 
 ### [2] EXPRESSIONS FOR CONSTANT VALUES SUCH AS A CALL TO KECCAK256(), SHOULD USE IMMUTABLE RATHER THAN CONSTANT
@@ -139,9 +253,25 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L37-L40)
 
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+   206: bytes32 public constant CONFIGURE_LP = keccak256("CONFIGURE_LP");
+
+   209: bytes32 public constant CONFIGURE_TIMELOCKS = keccak256(
+		"CONFIGURE_TIMELOCKS"
+	);
+
+   214: bytes32 public constant CONFIGURE_CREDITS = keccak256("CONFIGURE_CREDITS");
+
+   217: bytes32 public constant CONFIGURE_POOLS = keccak256("CONFIGURE_POOLS");
+
+   220: bytes32 public constant CONFIGURE_CAPS = keccak256("CONFIGURE_CAPS");
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L206-L220)
+
 ##
 
-### [3] Use "public immutable" instead of "immutable public"
+### [3] Use "public immutable " constantly instead of "immutable public"
 
 in Solidity, the order of modifiers in a variable declaration matters. The public modifier should come before the immutable modifier.
 
@@ -153,6 +283,23 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L43-L46)
 
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+    223:  address immutable public BYTES;
+ 
+    226:  address immutable public S1_CITIZEN;
+
+    229:  address immutable public S2_CITIZEN;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L223-L229)
+
+   239: address immutable public IDENTITY;
+
+   242: address immutable public VAULT;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L239-L242)
+
+   
 ##
 
 ### [4] FOR STATE VARIBAES, FOLLOW SOLIDITY STANDARD NAMING CONVENTIONS
@@ -232,6 +379,96 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L151-L153)
 
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol 
+
+   728 : unchecked { i++; }
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L728) 
+
+  743: unchecked { i++; }
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L743)
+
+  unchecked {
+   citizenStatus.points =
+				identityPoints * vaultMultiplier * timelockMultiplier /
+				_DIVISOR / _DIVISOR;
+			citizenStatus.timelockEndTime = block.timestamp + timelockDuration;
+
+			// Record the caller's staked S1 Citizen.
+			_stakerS1Position[msg.sender].push(citizenId);
+
+			// Update the pool point weights for rewards
+			pool.totalPoints += citizenStatus.points;
+		}
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L967-L978)
+
+      unchecked {
+			citizenStatus.points = 100 * timelockMultiplier / _DIVISOR;
+			citizenStatus.timelockEndTime = block.timestamp + timelockDuration;
+
+			// Record the caller's staked S2 Citizen.
+			_stakerS2Position[msg.sender].push(citizenId);
+
+			// Update the pool point weights for rewards
+			pool.totalPoints += citizenStatus.points;
+		}
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1021-L1030)
+
+          unchecked {
+				uint256 bonusPoints = (amount * 100 / _BYTES_PER_POINT);
+				citizenStatus.stakedBytes += amount;
+				citizenStatus.points += bonusPoints;
+				pool.totalPoints += bonusPoints;
+			}
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1076-L1081)
+
+     unchecked {
+     points += s1Citizen.points;
+     i++;
+     }
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1282-L1285)
+
+      1291 : unchecked {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1291)
+
+     1297: unchecked {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1297)
+
+    1330 : unchecked {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1330)
+
+   1341: unchecked {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1341)
+
+  1354: unchecked {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1354)
+
+  1369 : unchecked { j++; }
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1369)
+
+   1377: unchecked {
+
+   1383 : unchecked { i++; }
+
+   1387: unchecked {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1387)
+
+   1509 : unchecked { stakedIndex++; }
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1509)
+   
 ##
 
 ### [8] Omissions in Events
@@ -280,13 +517,157 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 		TREASURY = _treasury;
 	}
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L173-L177)  
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L173-L177) 
+
+     function configureLP (
+		address _lp
+	) external hasValidPermit(UNIVERSAL, CONFIGURE_LP) {
+		if (lpLocked) {
+			revert LockedConfigurationOfLP();
+		}
+		LP = _lp;
+	}
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1708-L1715) 
 
 Recommended Mitigation:
 
- require(TREASURY  != _treasury, "Same Address");
+ require(oldAddress!= _newAddress, "Same Address");
+
+##
+
+### [10] CONSTANTS SHOULD BE DEFINED RATHER THAN USING MAGIC NUMBERS
+
+ Even assembly can benefit from using readable constants instead of hex/numeric literals
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+   203 : uint256 constant private _BYTES_PER_POINT = 200 * 1e18;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L203)
 
 
+##
+
+### [11] Use "private constant" instead of "constant private"
+
+in Solidity, the order of modifiers in a variable declaration matters. The private modifier should come before the immutable modifier.
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+    191 : bytes4 constant private _TRANSFER_FROM_SELECTOR = 0x23b872dd;
+
+    194:  bytes4 constant private _TRANSFER_SELECTOR = 0xa9059cbb;
+
+    197:  uint256 constant private _PRECISION = 1e12;
+
+    200:  uint256 constant private _DIVISOR = 100;
+
+    203:  uint256 constant private _BYTES_PER_POINT = 200 * 1e18;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L191-L203)
+
+##
+
+### [12] NON-LIBRARY/INTERFACE FILES SHOULD USE FIXED COMPILER VERSIONS, NOT FLOATING ONES
+
+It is generally considered best practice to specify a fixed compiler version in non-library/interface files in Solidity, rather than using a floating version. This is because different versions of the Solidity compiler can introduce changes to the language syntax or behavior, which may cause compatibility issues or unexpected behavior in your code
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+    2: pragma solidity ^0.8.19;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L2)
+
+FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
+
+   2: pragma solidity ^0.8.19;
+
+##
+
+### [13] GENERATE PERFECT CODE HEADERS EVERY TIME
+
+Description
+I recommend using header for Solidity code layout and readability
+
+(https://github.com/transmissions11/headers)
+
+##
+
+### [14] Contract layout and order of functions
+
+Another [recommendation](https://docs.soliditylang.org/en/v0.8.17/style-guide.html#order-of-functions) is to declare internal functions below external functions.
+
+Functions should be grouped according to their visibility and ordered:
+
+constructor
+
+receive function (if exists)
+
+fallback function (if exists)
+
+external
+
+public
+
+internal
+
+private
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+The instances below highlights private above external. If possible, consider adding private functions below external functions for the contract layout
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1597-L1662)
+
+##
+
+### [15] Use constants instead of hardcoding numbers
+
+It is generally recommended to use constants instead of hardcoding numbers directly in your code. This can help make your code more readable and maintainable, as well as avoid errors that may arise from accidentally mistyping a number
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+  962: uint256 timelockDuration = _timelock >> 128;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L962)
+
+   1016: uint256 timelockDuration = _timelock >> 128;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1016)
+
+  1022: citizenStatus.points = 100 * timelockMultiplier / _DIVISOR;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1022)
+
+  1113: (seasonId << 128) + citizenId,
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1113)
+
+   1140: uint256 timelockDuration = _timelock >> 128;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1140)
+
+   1205: if (uint8(_assetType) > 4) {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1205)
+
+   1668: if (uint8(_assetType) == 2 || uint8(_assetType) > 4) {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1668-L1669)
+
+
+  
+
+
+
+ 
+
+
+ 
+  
+
+    
 
 
 
