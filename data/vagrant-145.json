@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "vagrant",
+  "risk": "3",
+  "title": "It is possible to deny any commission to the dao when calling getReward() effectively stealing funds from the treasury",
+  "issueId": 145,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/145"
+}
