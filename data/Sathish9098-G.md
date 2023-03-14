@@ -2,23 +2,7 @@
 
 ##
 
-### [G-1] EXPRESSIONS FOR CONSTANT VALUES SUCH AS A CALL TO KECCAK256(), SHOULD USE IMMUTABLE RATHER THAN CONSTANT
-
-it is recommended to use the immutable keyword for expressions that result in constant values, such as a call to keccak256(), instead of using the constant keyword. This is because using immutable can lead to gas savings during contract deployment and function calls
-
-By using immutable for constant value expressions, we can reduce the amount of gas needed to deploy the contract and execute its functions
-
-FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
-
-     37: bytes32 public constant BURN = keccak256("BURN");
-
-     40: bytes32 public constant ADMIN = keccak256("ADMIN");
-
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L37-L40)
-
-##
-
-### [G-2] OPTIMIZE NAMES TO SAVE GAS
+### [G-1] OPTIMIZE NAMES TO SAVE GAS
 
 public/external function names and public member variable names can be optimized to save gas.  Below are the interfaces/abstract contracts that can be optimized so that the most frequently-called functions use the least amount of gas possible during method lookup. Method IDs that have two leading zero bytes can save 128 gas each during deployment, and renaming functions to have lower method IDs will save 22 gas per call, [per sorted position shifted](https://medium.com/joyso/solidity-how-does-function-name-affect-gas-consumption-in-smart-contract-47d270d8ac92)
 
@@ -40,7 +24,7 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
 ##
 
-### [G-3] Setting the constructor to payable
+### [G-2] Setting the constructor to payable
 
 ou can cut out 10 opcodes in the creation-time EVM bytecode if you declare a constructor payable. Making the constructor payable eliminates the need for an initial check of msg.value == 0 and saves 13 gas on deployment with no security risks
 
@@ -52,7 +36,7 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
 ##
 
-### [G-5] ]  EXPRESSIONS FOR CONSTANT VALUES SUCH AS A CALL TO KECCAK256(), SHOULD USE IMMUTABLE RATHER THAN CONSTANT
+### [G-3] EXPRESSIONS FOR CONSTANT VALUES SUCH AS A CALL TO KECCAK256(), SHOULD USE IMMUTABLE RATHER THAN CONSTANT
 
 Using immutable variables instead of constant variables for expressions that evaluate to constant values, such as a call to keccak256(), can potentially save gas in smart contracts
 
@@ -224,8 +208,6 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
 ### [G-7] INSTEAD OF CALCULATING A STATEVAR WITH KECCAK256() EVERY TIME THE CONTRACT IS MADE PRE CALCULATE THEM BEFORE AND ONLY GIVE THE RESULT TO A CONSTANT
 
-
-
 FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
         37: bytes32 public constant BURN = keccak256("BURN");
@@ -313,7 +295,7 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
 ##
 
-### [G-10]  Use assembly to write address storage values
+### [G-10] Use assembly to write address storage values
 
 
          BYTES = _bytes;
@@ -325,58 +307,271 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L598)
 
+FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
+
+    81: BYTES1 = _bytes;
+    82: S1_CITIZEN = _s1Citizen;
+    83: STAKER = _staker;
+    84: TREASURY = _treasury;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L81-L84)
+
 ##
 
-### [G-11] ADD UNCHECKED {} FOR SUBTRACTIONS WHERE THE OPERANDS CANNOT UNDERFLOW BECAUSE OF A PREVIOUS REQUIRE() OR IF-STATEMENT . This saves 200-210 gas as per remix
-
-PROOF OF CONCEPT (remix without optimizations):
-
-pragma solidity ^0.8.7;
-contract MappingTest {
-
-// Execution Cost 696
-function Subtraction() public pure {
-int a=20; int b=10; int c=10; int d=30;
-    if(a>b){
-        a=a-b;
-    }
-    if(c<d){
-        c=d-c;
-    }
-   
-}
-//Execution Cost 276
-function uncheckedSubtraction() public pure {
-int a=20; int b=10; int c=10; int d=30;
-    if(a>b){
-        unchecked{a=a-b;}
-        
-    }
-    if(c<d){
-        unchecked{c=d-c;}
-    }
-   
-}
-
-
-}
-
-So clearly for each unchecked possible to save 210 gas 
-
-SOLUTION:
-
- require(a < b); x = b - a => require(a <b); unchecked { x = b - a } 
-
-require(a > b); x = a - b => require(a > b); unchecked { x = a - b } 
-
+### [G-11] Use calldata instead of memory for function arguments that do not get mutated
 
 FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
-   1320 : uint256 currentRewardRate = pool.rewardWindows[i - 1].reward;
+       824: function _stringEquals (
+		string memory _a,
+		string memory _b
+           ) private pure returns (bool) {
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1320)
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L824-L865)
 
+##
+
+### [G-12] Save gas with the use of the import statement
+
+While the following two critical VAULT_CAP,NO_VAULT_CAP values are assigned in the constructor, there is no zero value control. This means that if both state variables are started with a possible value of 0, the contract must be deployed again. This possibility means gas consumption.
+
+Zero value control is the most error-prone value control since zero value is assigned in case of no value entry due to EVM design.
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+     604: VAULT_CAP = _vaultCap;
+     605: NO_VAULT_CAP = _noVaultCap;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L604-L605)
+
+Recommendation:
+
+It is recommended to perform a zero value check for critical value assignments.
+
+##
+
+### [G-13] Using delete instead of setting struct 0 saves gas
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+         1517: stakedCitizen.stakedBytes = 0;
+         1518: stakedCitizen.timelockEndTime = 0;
+         1519: stakedCitizen.points = 0;
+         1520: stakedCitizen.hasVault = false;
+         1521: stakedCitizen.stakedVaultId = 0;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1517-L1521)
+
+       1582: stakedCitizen.stakedBytes = 0;
+       1583: stakedCitizen.timelockEndTime = 0;
+       1584: stakedCitizen.points = 0;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1582-L1584)
+
+## 
+
+### [G-14] Gas overflow during iteration (DoS)
+
+Each iteration of the cycle requires a gas flow. A moment may come when more gas is required than it is allocated to record one block. In this case, all iterations of the loop will fail
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L717-L728)
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L734-L743)
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1279-L1302)
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1312-L1383)
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1499-L1509)
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1564-L1574)
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1742-L1745)
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1765-L1772)
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1787-L1791)
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1806-L1809)
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1822-L1840)Reco
+
+Recommendations:
+
+Check the maxProcessingLengt allowed before start iterating the loops
+
+ require(Varibale.length < maxProcessingLengt, "max length");
+
+## [G-15] Save gas with the use of the import statement
+
+Description:
+
+Solidity code is also cleaner in another way that might not be noticeable: the struct Point. We were importing it previously with global import but not using it. The Point struct polluted the source code with an unnecessary object we were not using because we did not need it.
+
+This was breaking the rule of modularity and modular programming: only import what you need Specific imports with curly braces allow us to apply this rule better.
+
+Recommendation:
+
+import {contract1 , contract2} from "filename.sol";
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+  4: import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+
+  5: import "../access/PermitControl.sol";
+  6: import "../interfaces/IByteContract.sol";
+  7: import "../interfaces/IGenericGetter.sol";
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L4-L8)
+
+ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
+
+   import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+   import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+   import "../access/PermitControl.sol";
+   import "../interfaces/IByteContract.sol";
+   import "../interfaces/IStaker.sol";
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L4-L8)
+
+##
+
+### [G-16] Avoid contract existence checks by using solidity version 0.8.10 or later
+
+ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
+
+               (
+			uint256 reward,
+			uint256 daoCommision
+		) = IStaker(STAKER).claimReward(_to);
+
+       96: if (IERC20(BYTES1).balanceOf(msg.sender) < _amount) {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L117-L120)
+
+ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol  
+
+   632: uint256 rewardRate = citizen.getRewardRateOfTokenId(_citizenId);
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L632)
+
+    904: uint256 citizenVaultId = citizen.getVaultIdOfTokenId(citizenId);
    
+    948: uint256 identityId = citizen.getIdentityIdOfTokenId(citizenId);
+
+##
+
+### [G-17] Make 3 event parameters indexed when possible
+
+It’s the most gas efficient to make up to 3 event parameters indexed. If there are less than 3 parameters, you need to make all parameters indexed.
+
+ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
+
+The same extra indexed parameter can be applied to BytesUpgraded()
+
+      event BytesUpgraded (
+		address indexed caller,
+		uint256 amount
+	);
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L61-L64)
+
+ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol 
+
+The same extra indexed parameter can be applied to Stake()
+
+        event Stake (
+		address indexed staker,
+		address indexed asset,
+		uint256 timelockOption,
+		uint256 amountOrTokenId
+	);
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L539-L544)
+
+The same extra indexed parameter can be applied to Claim()
+
+       event Claim (
+		address indexed recipient,
+		uint256 reward,
+		uint256 tax
+	);
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L553-L557)
+
+The same extra indexed parameter can be applied to Withdraw() 
+
+     event Withdraw (
+		address indexed caller,
+		address indexed asset,
+		uint256 amountOrTokenId
+	);
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L567-L571)
+
+##
+
+### [G-18] Duplicated if() checks should be refactored to a modifier or function
+
+ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol 
+
+   693:  if (_assetType == AssetType.S1_CITIZEN) {
+   1278: if (_assetType == AssetType.S1_CITIZEN) {
+
+ [NeoTokyoStaker.sol#L693](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L693),[NeoTokyoStaker.sol#L1278](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1278)
+
+   1287: 	} else if (_assetType == AssetType.S2_CITIZEN) {
+   695:         } else if (_assetType == AssetType.S2_CITIZEN) {
+
+[NeoTokyoStaker.sol#L1287](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1287),[NeoTokyoStaker.sol#L695](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L695)
+
+   1071: if (citizenStatus.timelockEndTime == 0) {
+   1092: if (citizenStatus.timelockEndTime == 0) {
+
+[NeoTokyoStaker.sol#L1071](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1071),[NeoTokyoStaker.sol#L1092](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1092)
+
+   1472: if (stakedCitizen.timelockEndTime == 0) {
+   1547: if (stakedCitizen.timelockEndTime == 0) {
+
+[NeoTokyoStaker.sol#L1472](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1472),[NeoTokyoStaker.sol#L1547](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1547)
+
+   1477: if (stakedCitizen.stakedBytes > 0) {
+   1552: if (stakedCitizen.stakedBytes > 0) {
+
+[NeoTokyoStaker.sol#L1477](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1477),[NeoTokyoStaker.sol#L1552](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1552)
+
+   1502: if (citizenId == oldPosition[stakedIndex]) {
+   1567: if (citizenId == oldPosition[stakedIndex]) {
+
+[NeoTokyoStaker.sol#L1502](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1502),[NeoTokyoStaker.sol#L1567](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1567)
+
+##
+
+### [G-19] State variables should be cached with stack variables 
+
+##
+
+### [G-20] cache the function output with constant variable instead of calling same functions multiple times 
+
+##
+
+### [G-21] Struct check
+
+##
+
+### [G-22] Immutable the variables assigned value in constructor 
+
+##
+
+### [G-23] Private functions only called only once can be inlined to save gas 
+
+##
+
+### [Sort Solidity operations using short-circuit mode
+
+##
+
+### Empty blocks should be removed or emit something
+   
+
+
+
+
+
+ 
 
   
 
@@ -384,7 +579,8 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
    
 
-    
+
+
 
 
 
