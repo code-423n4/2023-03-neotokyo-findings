@@ -61,6 +61,22 @@ https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTo
 File: NeoTokyoStaker.sol | Line: 1499 | for (uint256 stakedIndex; stakedIndex < oldPosition.length; ) {
 https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1499
 
+## 4. Use bytes(x) instead of string where possible to save gas
+
+File: NeoTokyoStaker.sol | Line: 639 | string memory vaultMultiplier = (_vaultId != 0)
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L639
+File: NeoTokyoStaker.sol | Line: 665 | string memory vaultMultiplier = (_vaultId != 0)
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L665
+File: NeoTokyoStaker.sol | Line: 639 | string memory vaultMultiplier = (_vaultId != 0)
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L639
+File: NeoTokyoStaker.sol | Line: 665 | string memory vaultMultiplier = (_vaultId != 0)
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L665
+File: NeoTokyoStaker.sol | Line: 939 | string memory citizenCreditYield = getCreditYield(
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L939
+File: NeoTokyoStaker.sol | Line: 949 | string memory class = IGenericGetter(IDENTITY).getClass(identityId);
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L949
+
+
 
 
 
