@@ -203,7 +203,25 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
 ##
 
-### 
+### [7] Gas griefing/theft is possible on unsafe external call
+
+return data (bool success,) has to be stored due to EVM architecture, if in a usage like below, ‘out’ and ‘outsize’ values are given (0,0) . Thus, this storage disappears and may come from external contracts a possible Gas griefing/theft problem is avoided
+
+(https://twitter.com/pashovkrum/status/1607024043718316032?t=xs30iD6ORWtE2bTTYsCFIQ&s=19)
+
+FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
+
+          (bool success, bytes memory data) = 
+			_asset.call(
+				abi.encodeWithSelector(
+					_TRANSFER_FROM_SELECTOR,
+					_from,
+					_to, 
+					_idOrAmount
+				)
+			);
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L772-L780)
 
   
 
@@ -656,8 +674,119 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1668-L1669)
 
+##
+
+### [17] Tokens accidentally sent to the contract cannot be recovered
+
+It can’t be recovered if the tokens accidentally arrive at the contract address, which has happened to many popular projects, so I recommend adding a recovery code to your critical contracts.
+
+Recommended Mitigation Steps
+
+Add this code:
+
+ /**
+  * @notice Sends ERC20 tokens trapped in contract to external address
+  * @dev Onlyowner is allowed to make this function call
+  * @param account is the receiving address
+  * @param externalToken is the token being sent
+  * @param amount is the quantity being sent
+  * @return boolean value indicating whether the operation succeeded.
+  *
+ */
+  function rescueERC20(address account, address externalToken, uint256 amount) public onlyOwner returns (bool) {
+    IERC20(externalToken).transfer(account, amount);
+    return true;
+  }
+}
+
+##
+
+### [18] Use a single file for all system-wide constants
+
+There are many addresses and constants used in the system. It is recommended to put the most used ones in one file (for example constants.sol, use inheritance to access these values).
+
+This will help with readability and easier maintenance for future changes. This also helps with any issues, as some of these hard-coded values are admin addresses
+
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+       bytes4 constant private _TRANSFER_FROM_SELECTOR = 0x23b872dd;
+       bytes4 constant private _TRANSFER_SELECTOR = 0xa9059cbb;
+       uint256 constant private _PRECISION = 1e12;
+       uint256 constant private _DIVISOR = 100;
+       uint256 constant private _BYTES_PER_POINT = 200 * 1e18;
+       bytes32 public constant CONFIGURE_LP = keccak256("CONFIGURE_LP");
+       bytes32 public constant CONFIGURE_TIMELOCKS = keccak256(
+		"CONFIGURE_TIMELOCKS"
+	);
+       bytes32 public constant CONFIGURE_CREDITS = keccak256("CONFIGURE_CREDITS");
+       bytes32 public constant CONFIGURE_POOLS = keccak256("CONFIGURE_POOLS");
+       bytes32 public constant CONFIGURE_CAPS = keccak256("CONFIGURE_CAPS");
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L191-L220)
+
+FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
+
+        bytes32 public constant BURN = keccak256("BURN");
+        bytes32 public constant ADMIN = keccak256("ADMIN");
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L37-L40)
+
+##
+
+### [19] Assembly Codes Specific – Should Have Comments
+
+Since this is a low level language that is more difficult to parse by readers, include extensive documentation, comments on the rationale behind its use, clearly explaining what each assembly instruction does.
+
+This will make it easier for users to trust the code, for reviewers to validate the code, and for developers to build on or update the code.
+
+Note that using Assembly removes several important security features of Solidity, which can make the code more insecure and more error-prone.
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+   833: assembly {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L833)
+
+   886: assembly {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L886)
+
+   1001: assembly {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1001)
+  
+   1050: assembly{
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1050)
+
+   1128: assembly{
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1128)
+
+  1236: assembly {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1236)
+
+   1461: assembly {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1461)
+
+   1536: assembly {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1536)
+
+  1599: assembly{
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1599)
+
+  1682: assembly {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1682)
 
   
+
+
 
 
 
