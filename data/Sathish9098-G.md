@@ -539,32 +539,271 @@ The same extra indexed parameter can be applied to Withdraw()
 [NeoTokyoStaker.sol#L1502](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1502),[NeoTokyoStaker.sol#L1567](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1567)
 
 ##
+##
 
-### [G-19] State variables should be cached with stack variables 
+### [G-19] Create the instance of IGenericGetter(VAULT),IGenericGetter(S1_CITIZEN) outside the functions . We can reuse the instance variable whenever needed instead of creating new instance variables every time . This will save the gas cost 
+
+
+
+ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol 
+
+   638: IGenericGetter vault = IGenericGetter(VAULT);
+
+   664: IGenericGetter vault = IGenericGetter(VAULT);
+
+[NeoTokyoStaker.sol#L638](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L638),[NeoTokyoStaker.sol#L664](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L664)
+
+   631: IGenericGetter citizen = IGenericGetter(S1_CITIZEN);
+   903: IGenericGetter citizen = IGenericGetter(S1_CITIZEN);
+   
+
+[NeoTokyoStaker.sol#L631](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L631),[NeoTokyoStaker.sol#L903](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L903)
 
 ##
 
-### [G-20] cache the function output with constant variable instead of calling same functions multiple times 
+### [G-20] Cache the S1_CITIZEN immutable address variable value with local address variable . This will save the 60 gas as per remix gas reports 
+
+PROOF OF CONCEPT (REMIX WITHOUT OPTIMIZATIONS) :
+
+pragma solidity ^0.8.7;
+
+contract MappingTest {
+
+address public immutable A=0xE0f5206BBD039e7b0592d8918820024e2a7437b9;
+// execution cost 195 gas
+function withoutImmutableCache() public view {
+    if(A==0xE0f5206BBD039e7b0592d8918820024e2a7437b9){
+        if(A==0xE0f5206BBD039e7b0592d8918820024e2a7437b9){
+
+        }
+    }
+}
+// execution cost 135 gas
+function withImmutableCache() public view {
+
+    address a=A;
+     if(a==0xE0f5206BBD039e7b0592d8918820024e2a7437b9){
+         if(a==0xE0f5206BBD039e7b0592d8918820024e2a7437b9){
+
+        }
+    }
+}
+
+}
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol  
+
+  897: _assetTransferFrom(S1_CITIZEN, msg.sender, address(this), citizenId);
+
+  903: IGenericGetter citizen = IGenericGetter(S1_CITIZEN);
+
+     emit Stake(
+     msg.sender,
+     S1_CITIZEN,
+     _timelock,
+     citizenId
+    );
+
+[NeoTokyoStaker.sol#L897](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L897),[NeoTokyoStaker.sol#L903](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L903),[NeoTokyoStaker.sol#L983](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L983)
+
+> S2_CITIZEN should be cached with local address variable
+
+  1010: _assetTransferFrom(S2_CITIZEN, msg.sender, address(this), citizenId);
+
+    emit Stake(
+			msg.sender,
+			S2_CITIZEN,
+			_timelock,
+			citizenId
+		);
+
+[NeoTokyoStaker.sol#L1010](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1010),[NeoTokyoStaker.sol#L1035](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1035)
+   
+##
+
+### [G-21] Cache _PRECISION constant variable with local uint256 variable instead of calling multiple times . This will save the 9 gas as per remix gas reports
+
+PROOF OF CONCEPT (REMIX) :
+
+pragma solidity ^0.8.7;
+
+contract MappingTest {
+uint256 public constant A=100;
+// execution cost 802 gas
+function withoutContantCache() public pure {
+   uint256 b=200;
+
+   b+=A;
+   b/=A;
+   b*=A;
+}
+// execution cost 793 gas
+function withConstantCache() public pure {
+uint256 b=200;
+uint256 c=A;
+ b+=c;
+   b/=c;
+   b*=c;
+}
+}
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol  
+
+    1388: uint256 share = points * _PRECISION / pool.totalPoints * totalReward;
+
+    1390: share /= _PRECISION;
+
+    1391: daoShare /= _PRECISION;
+
+[NeoTokyoStaker.sol#L1388-L1391](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1388-L1391)
+
+ 
+### [G-21] Structs can be packed into fewer storage slots
+
+Each slot saved can avoid an extra Gsset (20000 gas) for the first setting of the struct. Subsequent reads as well as writes have smaller gas savings
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol  
+
+     struct StakedS1Citizen {
+       uint256 stakedBytes; //32-SLOT 1
+       uint256 timelockEndTime; //32- SLOT 2
+       uint256 points; //32 SLOT-3
+       uint256 stakedVaultId; //32 SLOT-4
+       bool hasVault; //1 SLOT-5
+	}
+
+Total slots 5
+
+[NeoTokyoStaker.sol#L359-L365](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L359-L365)
+
+We can declare timelockEndTime uint128 instead of uint256. Using uint128 we can store 10,774,146,971,163 years this is more than enough for timelockEndTime . So we can save 1 slot and saves 20000 gas 
+
+Recommended Mitigation:
+
+      /// @audit Variable ordering with 4 slots instead of the current 5:
+
+       struct StakedS1Citizen {
+       uint256 stakedBytes; //32-SLOT 1
+    -  uint256 timelockEndTime; 
+       uint256 points; //32 SLOT-2
+       uint256 stakedVaultId; //32 SLOT-3
+   +   uint128 timelockEndTime; //16- SLOT 4
+       bool hasVault; //1 SLOT-4
+	}
+
+## Same like last example we can reduce one slot 
+
+        struct StakedS1CitizenOutput {
+		uint256 citizenId; //32 -SLOT1
+		uint256 stakedBytes; //32 -SLOT2
+		uint256 timelockEndTime; //32 -SLOT3
+		uint256 points; //32 -SLOT4
+		uint256 stakedVaultId; //32 -SLOT5
+		bool hasVault; //1 -SLOT6
+	}
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L462-L469)
+
+Total slots 6
+
+Recommended Mitigation:
+
+       /// @audit Variable ordering with 5 slots instead of the current 6:
+        struct StakedS1CitizenOutput {
+		uint256 citizenId; //32 -SLOT1
+		uint256 stakedBytes; //32 -SLOT2
+           -    uint256 timelockEndTime; 
+		uint256 points; //32 -SLOT3
+		uint256 stakedVaultId; //32 -SLOT4
+            +   uint128 timelockEndTime; //16 -SLOT5 
+		bool hasVault; //1 -SLOT5
+	}
+
+     
+## 
+
+### [G-22] State variables can be packed into fewer storage slots
+
+If variables occupying the same slot are both written the same function or by the constructor, avoids a separate Gsset (20000 gas). Reads of the variables can also be cheaper
+
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol  
+
+
+    232: address public LP; //20 bytes
+
+    511: bool public lpLocked; //1byte
+
+Move the  (bool public lpLocked) bellow the (address public LP) this wills save the one slot 
+
+
+    232: address public LP; //20 bytes
+  + 233: bool public lpLocked;
+  - 511: bool public lpLocked;
+
+Once moved possible to pack both variable in single slot instead of 2 slots . So possible to save 20000 gas
+
+## 
+
+### [G-23] PRIVATE FUNCTIONS ONLY CALLED ONCE CAN BE INLINED TO SAVE GAS
+
+Not inlining costs 20 to 40 gas because of two extra JUMP instructions and additional stack operations needed for function calls.
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol  
+
+   function _stringEquals (
+		string memory _a,
+		string memory _b
+    ) private pure returns (bool) {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L824-L827)
+
+     function _stakeS1Citizen (
+		uint256 _timelock
+	) private {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L875-L877)
+
+     function _stakeS2Citizen (
+		uint256 _timelock
+	) private {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L995-L998)
+
+    function _stakeBytes (
+		uint256
+	) private {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1044-L1046)
+
+    function _stakeLP (
+		uint256 _timelock
+	) private {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1124-L1126)
 
 ##
 
-### [G-21] Struct check
+### [G-24] Empty blocks should be removed to save deployment cost 
 
-##
+FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
-### [G-22] Immutable the variables assigned value in constructor 
+   function updateRewardOnMint (
+		address,
+		uint256
+	) external {
+	}
 
-##
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L204-L208)
 
-### [G-23] Private functions only called only once can be inlined to save gas 
+     function updateReward (
+		address,
+		address,
+		uint256
+	) external {
+	}
 
-##
-
-### [Sort Solidity operations using short-circuit mode
-
-##
-
-### Empty blocks should be removed or emit something
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L189-L194)
    
 
 
