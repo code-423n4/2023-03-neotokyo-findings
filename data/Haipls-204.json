@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "Haipls",
+  "risk": "3",
+  "title": "Insufficient accuracy of points calculations. Mint `1e78` BYTES2",
+  "issueId": 204,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/204"
+}
