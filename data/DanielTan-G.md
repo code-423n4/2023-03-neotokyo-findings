@@ -37,4 +37,4 @@ Same as the calculation of `points` in the `_withdrawLP` function shown below:
 			...
 	}
 ```
-The calculation of `points` could be replaced with `uint256 points = amount * 100 / 1e18 * lpPosition.multiplier / _DIVISOR;` to save gas.
+The calculation of `points` could be replaced with `uint256 points = amount / 1e18 * lpPosition.multiplier;` to save gas.
