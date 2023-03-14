@@ -96,13 +96,13 @@ index 231f47d..5fded43 100644
 +```
 ```
 
-In the code above, an attacker is just spamming `BYTES2.getReward()` over 1000 transactions to trigger the reward-claiming mechanism for Bob. The ONLY directly visible effect is that of a gas-less transaction gift from an "attacker" to Bob.
+In the code above, an attacker is just spamming `BYTES2.getReward()` over 1000 transactions to trigger the reward-claiming mechanism for Bob. The ONLY directly visible effect is that of gas-less transactions gifts from an "attacker" to Bob.
 
-This direct call is used at multiple places in the code (in both `NTCitizenDeploy` and `NeoTokyoStaker`), which is fine, but giving the possibility for anyone to claim on behalf on anyone might be wrong. While it could be seen as a gift (thanks for the gas), the staker might have their own reasons and restrictions (taxes, accounting) for not claiming their reward before a certain date. What if:
+This direct call is used at multiple places in the code (in both `NTCitizenDeploy` and `NeoTokyoStaker`), which is fine, but giving the possibility for anyone to claim on behalf on anyone might be wrong. While it could be seen as a gift ("thanks for the gas!"), the staker might have their own reasons and restrictions (taxes, accounting) for not claiming their reward before a certain date. What if:
 
 - Alice has a simplified company status (solo entrepreneur)
-- It's December 31st 2023 and Alice declared her taxes, within the limits of her earnings to not change status
-- Alice is keenly waiting for January 1st 2024 to claim her longly accumulated rewards, to start the year strongly
+- It's December 31st 2023 and Alice declared her taxes, within the limits of her allowed earnings so as to not have to change her company's status
+- Alice is keenly waiting for January 1st 2024 to claim her longly accumulated rewards and start the new year strongly
 - Bob calls `BYTES2.getReward()` with Alice's address during December 31st 2023, forcing her to claim her rewards
 - Alice will now need to change her company's status in 2024 due to having earned too much in 2023. And she'll need to edit her taxes
 
