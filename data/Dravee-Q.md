@@ -1,125 +1,34 @@
 **Overview**
 Risk Rating | Number of issues
 --- | ---
-Low Risk | 7
-Non-Critical Risk | 8
+Low Risk | 6
+Non-Critical Risk | 9
 
 **Table of Contents**
 
 - [1. Low Risk Issues](#1-low-risk-issues)
-  - [1.1. `BYTES2.getReward()` should be access-controlled](#11-bytes2getreward-should-be-access-controlled)
-  - [1.2. `uint8(_assetType) > 4` is a vacuous truth](#12-uint8_assettype--4-is-a-vacuous-truth)
-  - [1.3. Using `transferFrom` on ERC721 tokens](#13-using-transferfrom-on-erc721-tokens)
-  - [1.4. `_assetTransferFrom` is used both for ERC721 and ERC20](#14-_assettransferfrom-is-used-both-for-erc721-and-erc20)
-  - [1.5. Known vulnerabilities exist in currently used `@openzeppelin/contracts` version](#15-known-vulnerabilities-exist-in-currently-used-openzeppelincontracts-version)
-  - [1.6. No event emitted when updating a state variable](#16-no-event-emitted-when-updating-a-state-variable)
-  - [1.7. `NeoTokyoStaker.getStakerPosition()` is clunky](#17-neotokyostakergetstakerposition-is-clunky)
+  - [1.1. The `uint8(_assetType) > 4` check is wrong and unnecessary due to a vacuous truth](#11-the-uint8_assettype--4-check-is-wrong-and-unnecessary-due-to-a-vacuous-truth)
+  - [1.2. Using `transferFrom` on ERC721 tokens](#12-using-transferfrom-on-erc721-tokens)
+  - [1.3. `_assetTransferFrom` is used both for ERC721 and ERC20](#13-_assettransferfrom-is-used-both-for-erc721-and-erc20)
+  - [1.4. Known vulnerabilities exist in currently used `@openzeppelin/contracts` version](#14-known-vulnerabilities-exist-in-currently-used-openzeppelincontracts-version)
+  - [1.5. No event emitted when updating a state variable](#15-no-event-emitted-when-updating-a-state-variable)
+  - [1.6. `NeoTokyoStaker.getStakerPosition()` is clunky](#16-neotokyostakergetstakerposition-is-clunky)
 - [2. Non-Critical Issues](#2-non-critical-issues)
   - [2.1. `BYTES2.getReward()`'s naming is confusing](#21-bytes2getrewards-naming-is-confusing)
-  - [2.2. `"@openzeppelin/contracts"` should be a dependency, not a dev-dependency](#22-openzeppelincontracts-should-be-a-dependency-not-a-dev-dependency)
-  - [2.3. Duplicated code](#23-duplicated-code)
-  - [2.4. The `unchecked` statements are undocumented](#24-the-unchecked-statements-are-undocumented)
-  - [2.5. Use `delete` instead of setting every fields to their default value](#25-use-delete-instead-of-setting-every-fields-to-their-default-value)
-  - [2.6. Add commented parameter names](#26-add-commented-parameter-names)
-  - [2.7. Import declarations should import specific identifiers, rather than the whole file](#27-import-declarations-should-import-specific-identifiers-rather-than-the-whole-file)
-  - [2.8. Function ordering does not follow the Solidity style guide](#28-function-ordering-does-not-follow-the-solidity-style-guide)
+  - [2.2. Avoid using magic numbers instead of the existing enum's values](#22-avoid-using-magic-numbers-instead-of-the-existing-enums-values)
+  - [2.3. `"@openzeppelin/contracts"` should be a dependency, not a dev-dependency](#23-openzeppelincontracts-should-be-a-dependency-not-a-dev-dependency)
+  - [2.4. Duplicated code](#24-duplicated-code)
+  - [2.5. The `unchecked` statements are undocumented](#25-the-unchecked-statements-are-undocumented)
+  - [2.6. Use `delete` instead of setting every fields to their default value](#26-use-delete-instead-of-setting-every-fields-to-their-default-value)
+  - [2.7. Add commented parameter names](#27-add-commented-parameter-names)
+  - [2.8. Import declarations should import specific identifiers, rather than the whole file](#28-import-declarations-should-import-specific-identifiers-rather-than-the-whole-file)
+  - [2.9. Function ordering does not follow the Solidity style guide](#29-function-ordering-does-not-follow-the-solidity-style-guide)
 
 # 1. Low Risk Issues
 
-## 1.1. `BYTES2.getReward()` should be access-controlled
+## 1.1. The `uint8(_assetType) > 4` check is wrong and unnecessary due to a vacuous truth
 
-Given the [following comment](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L109-L110), one could think that this method should be access controlled:
-
-```solidity
-    This function is called by the S1 Citizen contract to emit BYTES to callers 
-    based on their state from the staker contract.
-```
-
-Furthermore, the external call `IStaker(STAKER).claimReward(_to)` [checks that the caller is `BYTES2`](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1414-L1416):
-
-```solidity
-    if (msg.sender != BYTES) {
-        revert CallerIsNotBYTES();
-    }
-```
-
-However, `BYTES2.getReward()` can be directly called by anyone for any staker to force a claim:
-
-```diff
-diff --git a/test/NeoTokyoStaker.test.js b/test/NeoTokyoStaker.test.js
-index 231f47d..5fded43 100644
---- a/test/NeoTokyoStaker.test.js
-+++ b/test/NeoTokyoStaker.test.js
-@@ -24,7 +24,7 @@ describe('Testing BYTES 2.0 & Neo Tokyo Staker', function () {
-        let currentTime, snapshotId;
- 
-        // Prepare several testing callers.
--       let owner, alice, bob, nonCitizen, whale, treasury;
-+       let owner, alice, bob, nonCitizen, whale, treasury, attacker;
- 
-        // Neo Tokyo S1 contract instances.
-        let beckLoot, NTItems, NTLandDeploy, vaultBox, NTCitizenDeploy, NTOldBytes;
-@@ -76,6 +76,11 @@ describe('Testing BYTES 2.0 & Neo Tokyo Staker', function () {
-                        signer: signers[5],
-                        address: addresses[5]
-                };
-+               attacker = {
-+                       provider: signers[6].provider,
-+                       signer: signers[6],
-+                       address: addresses[6]
-+               };
- 
-                // Prepare all of the Neo Tokyo S1, S2, and new contracts for testing.
-                [
-@@ -558,7 +563,7 @@ describe('Testing BYTES 2.0 & Neo Tokyo Staker', function () {
-                });
- 
-                // Simulate a competitive staking scenario between Alice and Bob.
--               it('a comprehensive happy-path test', async function () {
-+               it.only('a comprehensive happy-path test', async function () {
- 
-                        // Bob stakes his S1 Citizen.
-                        await NTStaking.connect(bob.signer).stake(
-@@ -654,6 +659,16 @@ describe('Testing BYTES 2.0 & Neo Tokyo Staker', function () {
-                        let bobBalanceInitial = await NTBytes2_0.balanceOf(bob.address);
-                        let aliceBalanceInitial = await NTBytes2_0.balanceOf(alice.address);
- 
-+                       // Simulate an attacker directly calling NTBytes2_0's getReward() with Bob's address after just 1h. The attacker is calling 1000 times here
-+                       console.log("attacker call start");
-+                       await ethers.provider.send('evm_setNextBlockTimestamp', [
-+                               bobStakeTime + (60 * 60 * 1)
-+                       ]);
-+                       for (let i = 0; i < 1000; ++i) {
-+                               await NTBytes2_0.connect(attacker.signer).getReward(bob.address);
-+                         }
-+                       console.log("attacker call end");
-+```
-```
-
-In the code above, an attacker is just spamming `BYTES2.getReward()` over 1000 transactions to trigger the reward-claiming mechanism for Bob. The ONLY directly visible effect is that of gas-less transactions gifts from an "attacker" to Bob.
-
-This direct call is used at multiple places in the code (in both `NTCitizenDeploy` and `NeoTokyoStaker`), which is fine, but giving the possibility for anyone to claim on behalf on anyone might be wrong. While it could be seen as a gift ("thanks for the gas!"), the staker might have their own reasons and restrictions (taxes, accounting) for not claiming their reward before a certain date. What if:
-
-- Alice has a simplified company status (solo entrepreneur)
-- It's December 31st 2023 and Alice declared her taxes, within the limits of her allowed earnings so as to not have to change her company's status
-- Alice is keenly waiting for January 1st 2024 to claim her longly accumulated rewards and start the new year strongly
-- Bob calls `BYTES2.getReward()` with Alice's address during December 31st 2023, forcing her to claim her rewards
-- Alice will now need to change her company's status in 2024 due to having earned too much in 2023. And she'll need to edit her taxes
-
-This can therefore be damaging (and annoying) in unforeseen ways.
-
-Consider only allowing Citizens, the Staker contract and `msg.sender == _to` to call `BYTES2.getReward()`:
-
-```diff
- function getReward (
-  address _to
- ) external {
-+        require(msg.sender == STAKER || msg.sender == S1_CITIZEN || msg.sender == _to, "unauthorized caller");
-```
-
-## 1.2. `uint8(_assetType) > 4` is a vacuous truth
-
-The following lines have a vacuous truth:
+The following `uint8(_assetType) > 4` checks never be verified due to a vacuous truth:
 
 - <https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1205-L1207>
 
@@ -161,15 +70,20 @@ Indeed, the `enum AssetType` is limited to an index of 3:
 And the following will always revert if using anything that is `>= 4`:
 
 ```solidity
- function stake (
-  AssetType _assetType,   //@audit-ok will revert with anything >= 4
+function stake (
+    AssetType _assetType, //@audit-ok will revert with anything >= 4
+
+function withdraw (
+    AssetType _assetType, //@audit-ok will revert with anything >= 4
 ```
 
-`uint8(_assetType) > 4` is a wrong check as it doesn't exclude `4` which isn't even a reachable value for `AssetType`. If the input parameter in the method wouldn't have reverted, both `uint8(_assetType) > 4` conditions would have let an index of `4` slip through.
+Therefore, as `uint8(_assetType)` is at most equal to `3` in a transaction, it's impossible to ever verify `uint8(_assetType) > 4`
 
-I suggest deleting those as they can never happen (vacuous truths). But if you insist on them existing just to be reassured, consider either replacing those by `uint8(_assetType) >= 4` or `uint8(_assetType) > 3`, as these would be the right checks.
+Furthermore, `uint8(_assetType) > 4` is a wrong check as it doesn't exclude `4` which isn't even a reachable value for `AssetType`. If the input parameter in the method wouldn't have reverted for some reason with the input `4`, both `uint8(_assetType) > 4` conditions would have let a wrong index of `4` slip through.
 
-## 1.3. Using `transferFrom` on ERC721 tokens
+I suggest deleting those as they can never happen. But if you insist on them existing just to be reassured, consider either replacing those by `uint8(_assetType) >= 4` or `uint8(_assetType) > 3`, as these would be the right checks.
+
+## 1.2. Using `transferFrom` on ERC721 tokens
 
 The `transferFrom` function is used instead of `safeTransferFrom` here, and [it's discouraged by OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/109778c17c7020618ea4e035efb9f0f9b82d43ca/contracts/token/ERC721/IERC721.sol#L84). We can even find this warning at multiple places in the contest repo here:
 
@@ -229,7 +143,7 @@ Notice that [the following](https://github.com/code-423n4/2023-03-neotokyo/blob/
 + bytes4 constant private _SAFE_TRANSFER_FROM_SELECTOR = 0x42842e0e;
 ```
 
-## 1.4. `_assetTransferFrom` is used both for ERC721 and ERC20
+## 1.3. `_assetTransferFrom` is used both for ERC721 and ERC20
 
 Just like mentioned in the comment [here](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L190-L191), the `transferFrom` selector is used both for ERC-20 and ERC-721 tokens:
 
@@ -258,7 +172,7 @@ contracts/staking/NeoTokyoStaker.sol:
 
 Hence, `_TRANSFER_FROM_SELECTOR` will only be used for ERC20 tokens and the previously suggested `_SAFE_TRANSFER_FROM_SELECTOR` will be used only for ERC721 tokens.
 
-## 1.5. Known vulnerabilities exist in currently used `@openzeppelin/contracts` version
+## 1.4. Known vulnerabilities exist in currently used `@openzeppelin/contracts` version
 
 As some [known vulnerabilities](https://snyk.io/test/npm/@openzeppelin/contracts/4.3.1) exist in the current `@openzeppelin/contracts` version, consider updating `package.json` with at least `@openzeppelin/contracts@4.7.3` here: <https://github.com/code-423n4/2023-03-neotokyo/blob/main/package.json#L23>
 
@@ -266,7 +180,7 @@ The only vulnerability that seems to affect this project is the following:
 
 - [Information Exposure](https://security.snyk.io/vuln/SNYK-JS-OPENZEPPELINCONTRACTS-2958047)
 
-## 1.6. No event emitted when updating a state variable
+## 1.5. No event emitted when updating a state variable
 
 The configuration methods in `NeoTokyoStaker` don't emit events:
 
@@ -286,7 +200,7 @@ The change methods in `BYTES2` don't emit events:
 
 Not emitting events when changing state variables is a bad practice and can be seen as a trust issue
 
-## 1.7. `NeoTokyoStaker.getStakerPosition()` is clunky
+## 1.6. `NeoTokyoStaker.getStakerPosition()` is clunky
 
 It's only possible to fetch the S1 Citizen or S2 Citizen types through [getStakerPosition()](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L689-L700), otherwise the documentation asks to use the [public variables for LP assets](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L676-L677) and the [full output of getStakerPositions()](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L678-L679) for BYTES.
 
@@ -298,7 +212,20 @@ However, this doesn't facilitate integration with external contracts at all. I s
 
 Usually, the `get` prefix is used for view-only functions. However, here, this function is actually more of a `claimReward` function, as it calls an external `claimReward` and then mints tokens.
 
-## 2.2. `"@openzeppelin/contracts"` should be a dependency, not a dev-dependency
+## 2.2. Avoid using magic numbers instead of the existing enum's values
+
+The following is using a hardcoded `2` instead of the clearer, more readable and more maintainable `_assetType == AssetType.BYTES` enum value.
+
+Consider the following:
+
+- [NeoTokyoStaker.sol#L1668](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1668)
+
+```diff
+- 1668:   if (uint8(_assetType) == 2 || uint8(_assetType) > 4) {
++ 1668:   if (_assetType == AssetType.BYTES || uint8(_assetType) > 4) {
+```
+
+## 2.3. `"@openzeppelin/contracts"` should be a dependency, not a dev-dependency
 
 ```diff
 File: package.json
@@ -323,11 +250,11 @@ File: package.json
 - 24:     "@openzeppelin/contracts": "^4.3.1",
 ```
 
-## 2.3. Duplicated code
+## 2.4. Duplicated code
 
 The [following code](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L637-L641) is a copy-paste of the [getConfiguredVaultMultiplier()](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L659-L670) method. Consider calling the existing function instead of having a duplicated piece of code.
 
-## 2.4. The `unchecked` statements are undocumented
+## 2.5. The `unchecked` statements are undocumented
 
 While there doesn't seem to be an issue with them, there should never exist any doubt in the reason to use an `unchecked` statement in the code.
 This will also be beneficial for your future bug bounty program.
@@ -488,7 +415,7 @@ contracts/staking/NeoTokyoStaker.sol:
   1638  
 ```
 
-## 2.5. Use `delete` instead of setting every fields to their default value
+## 2.6. Use `delete` instead of setting every fields to their default value
 
 - <https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1517-L1521>
 
@@ -510,7 +437,7 @@ contracts/staking/NeoTokyoStaker.sol:
 +  delete stakedS2[msg.sender][citizenId];
 ```
 
-## 2.6. Add commented parameter names
+## 2.7. Add commented parameter names
 
 When the return statement is documented but unnamed, consider adding a little comment with the name as such: `Type Location /* name */`.
 
@@ -569,7 +496,7 @@ contracts/staking/NeoTokyoStaker.sol:
 +  1412   ) external returns (uint256 /* Reward amount */, uint256 /* DAO Tax amount */) { 
 ```
 
-## 2.7. Import declarations should import specific identifiers, rather than the whole file
+## 2.8. Import declarations should import specific identifiers, rather than the whole file
 
 Using import declarations of the form `import {<identifier_name>} from "some/file.sol"` avoids polluting the symbol namespace making flattened files smaller, and speeds up compilation
 
@@ -585,6 +512,6 @@ NeoTokyoStaker.sol:7:import "../interfaces/IByteContract.sol";
 NeoTokyoStaker.sol:8:import "../interfaces/IGenericGetter.sol";
 ```
 
-## 2.8. Function ordering does not follow the Solidity style guide
+## 2.9. Function ordering does not follow the Solidity style guide
 
 According to the [Solidity style guide](https://docs.soliditylang.org/en/v0.8.17/style-guide.html#order-of-functions), functions should be laid out in the following order :`constructor()`, `receive()`, `fallback()`, `external`, `public`, `internal`, `private`, but `NeoTokyoStaker` doesn't follow this pattern
