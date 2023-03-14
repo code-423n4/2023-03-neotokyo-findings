@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "MyFDsYours",
+  "risk": "2",
+  "title": "Calculating points is susceptible to precision loss due to division before multiplication",
+  "issueId": 208,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/208"
+}
