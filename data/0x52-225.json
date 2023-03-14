@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "0x52",
+  "risk": "2",
+  "title": "Staker may accidentally DOS withdrawal for themselves",
+  "issueId": 225,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/225"
+}
