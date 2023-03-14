@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "DeFiHackLabs",
+  "risk": "2",
+  "title": "Centralization risk - BURN Role can burn any amount of BYTES2 from an arbitrary address",
+  "issueId": 179,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/179"
+}
