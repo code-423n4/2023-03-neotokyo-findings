@@ -1,3 +1,5 @@
+Neo Tokyo GA Report
+
 ### [L1] Constructors and functions without contract integrity check
 
 ## Impact
@@ -122,6 +124,52 @@ Manual
 ## Recommended Mitigation Steps
 Consider emitting events 
 
+### [L3] Gas griefing/theft is possible on unsafe external call
+
+## Impact
+Return data (bool success,) has to be stored due to EVM architecture, if in a usage like below, ‘out’ and ‘outsize’ values are given (0,0) . Thus, this storage disappears and may come from external contracts a possible Gas griefing/theft problem is avoided
+
+## Proof of Concept
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L773
+
+```
+function _assetTransferFrom (
+		address _asset,
+		address _from,
+		address _to,
+		uint256 _idOrAmount
+	) private {
+		(bool success, bytes memory data) = 
+			_asset.call(
+				abi.encodeWithSelector(
+					_TRANSFER_FROM_SELECTOR,
+					_from,
+					_to, 
+					_idOrAmount
+				)
+			);
+```
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L802
+```
+function _assetTransfer (
+		address _asset,
+		address _to,
+		uint256 _amount
+	) private {
+		(bool success, bytes memory data) = 
+			_asset.call(
+				abi.encodeWithSelector(
+					_TRANSFER_SELECTOR,
+					_to, 
+					_amount
+				)
+			);
+```
+## Tools Used
+Manual
+
+## Recommended Mitigation Steps
+Use a low-level assembly call since it does not automatically copy return data to memory. Consider to use https://github.com/nomad-xyz/ExcessivelySafeCall/blob/main/src/ExcessivelySafeCall.sol
 
 ---
 
