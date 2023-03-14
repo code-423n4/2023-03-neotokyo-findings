@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "8olidity",
+  "risk": "2",
+  "title": "Didn't check if the array lengths are the same",
+  "issueId": 191,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/191"
+}
