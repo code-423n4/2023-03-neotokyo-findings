@@ -44,6 +44,26 @@ https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTo
 
 https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1383
 
+## 3. Caching Array Length in For Loops for Gas Savings
+
+By storing the length of the array in a local variable before the loop, the loop header can reference this variable instead of accessing the length of the array multiple times
+
+
+File: NeoTokyoStaker.sol | Line: 734 | for (uint256 i; i < _stakerS2Position[_staker].length; ) {
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L734
+
+File: NeoTokyoStaker.sol | Line: 1279 | for (uint256 i; i < _stakerS1Position[_recipient].length; ) {
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1279
+
+File: NeoTokyoStaker.sol | Line: 1288 | for (uint256 i; i < _stakerS2Position[_recipient].length; ) {
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1288
+
+File: NeoTokyoStaker.sol | Line: 1499 | for (uint256 stakedIndex; stakedIndex < oldPosition.length; ) {
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1499
+
+
+
+
 
 
 
