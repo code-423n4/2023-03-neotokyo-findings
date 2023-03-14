@@ -76,6 +76,29 @@ https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTo
 File: NeoTokyoStaker.sol | Line: 949 | string memory class = IGenericGetter(IDENTITY).getClass(identityId);
 https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L949
 
+## 5. Caching External Contract Calls
+
+In the upgradeBytes function, there are two external contract calls:
+
+`IERC20(BYTES1).balanceOf(msg.sender)`
+`IByteContract(BYTES1).burn(msg.sender, _amount)`
+
+These calls can be optimized by storing the contract instance in a variable and reusing it, rather than creating a new instance for each call. This will save gas by reducing the overhead associated with creating new instances.
+
+`function upgradeBytes(uint256 _amount) external
+    IERC20 bytes1Contract = IERC20(BYTES1);
+    
+    if (bytes1Contract.balanceOf(msg.sender) < _amount) {
+        revert DoNotHaveEnoughOldBytes(_amount);
+    }
+    
+    IByteContract(address(bytes1Contract)).burn(msg.sender, _amount);
+    _mint(msg.sender, _amount);
+
+    emit BytesUpgraded(msg.sender, _amount);
+}
+
+
 
 
 
