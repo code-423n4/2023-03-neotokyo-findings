@@ -70,3 +70,46 @@ File: NeoTokyoStaker.sol | Line: 1515 | pool.totalPoints -= stakedCitizen.points
 https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1515
 File: NeoTokyoStaker.sol | Line: 1580 | pool.totalPoints -= stakedCitizen.points;
 https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1580
+
+## 2. ++i is more gas efficient than i++
+
+This is because the pre-increment operator directly modifies the variable's value, while the post-increment operator requires an additional read and write operation to modify the value.
+
+File: NeoTokyoStaker.sol | Line: 728 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L728
+File: NeoTokyoStaker.sol | Line: 743 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L743
+File: NeoTokyoStaker.sol | Line: 1383 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1383
+File: NeoTokyoStaker.sol | Line: 728 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L728
+File: NeoTokyoStaker.sol | Line: 743 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L743
+File: NeoTokyoStaker.sol | Line: 1383 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1383
+File: NeoTokyoStaker.sol | Line: 728 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L728
+File: NeoTokyoStaker.sol | Line: 743 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L743
+File: NeoTokyoStaker.sol | Line: 1284 | i++;
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1284
+File: NeoTokyoStaker.sol | Line: 1293 | i++;
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1293
+File: NeoTokyoStaker.sol | Line: 1383 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1383
+File: NeoTokyoStaker.sol | Line: 728 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L728
+File: NeoTokyoStaker.sol | Line: 743 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L743
+File: NeoTokyoStaker.sol | Line: 1284 | i++;
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1284
+File: NeoTokyoStaker.sol | Line: 1293 | i++;
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1293
+File: NeoTokyoStaker.sol | Line: 1383 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1383
+File: NeoTokyoStaker.sol | Line: 728 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L728
+File: NeoTokyoStaker.sol | Line: 743 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L743
+File: NeoTokyoStaker.sol | Line: 1383 | unchecked { i++; }
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1383
