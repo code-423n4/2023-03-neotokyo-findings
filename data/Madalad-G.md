@@ -2,17 +2,14 @@
 | |Issue|Instances|
 |:-:|:-|:-:|
 |[G-01]|Use `calldata` instead of `memory` for function arguments that are read only|12|
-|[G-02]|Duplicated `require`/`revert` checks should be refactored to a modifier or function.|2|
-|[G-03]|Use `indexed` to save gas|6|
-|[G-04]|Cache length outside of for loop|11|
-|[G-05]|Expressions for constant values such as a call to `keccak256` should use `immutable` rather than `constant`|7|
-|[G-06]|Use `unchecked` for operations that cannot overflow/underflow|4|
-|[G-07]|`++i` costs less gas than `i++`|9|
-|[G-08]|`_stringEquals` can be optimized|1|
+|[G-02]|Use `indexed` to save gas|6|
+|[G-03]|Expressions for constant values such as a call to `keccak256` should use `immutable` rather than `constant`|7|
+|[G-04]|Functions guaranteed to revert when called by normal users can be marked `payable`|11|
+|[G-05]|`_stringEquals` can be optimized|1|
 
-Total issues: 8
+Total issues: 5
 
-Total instances: 52
+Total instances: 37
 
 &nbsp;
 # Gas Optimizations
@@ -23,6 +20,33 @@ When a function with a `memory` array is called externally, the `abi.decode()` s
 If the array is passed to an `internal` function which passes the array to another `internal` function where the array is modified and therefore `memory` is used in the `external` call, it's still more gas-efficient to use `calldata` when the external function uses modifiers, since the modifiers may prevent the `internal` functions from being called. `Structs` have the same overhead as an array of length one
 
 Instances: 12
+```solidity
+File: contracts/staking/NeoTokyoStaker.sol
+
+825:		string memory _a,
+
+826:		string memory _b
+
+1739:		uint256[] memory _timelockIds,
+
+1740:		uint256[] memory _encodedSettings
+
+1761:		uint256[] memory _citizenRewardRates, 
+
+1762:		uint256[] memory _vaultRewardRates, 
+
+1763:		uint256[] memory _identityCreditYields
+
+1784:		string[] memory _identityCreditYields,
+
+1785:		uint256[] memory _points
+
+1803:		string[] memory _vaultCreditMultipliers,
+
+1804:		uint256[] memory _multipliers
+
+1820:		PoolConfigurationInput[] memory _inputs
+```
 - [contracts/staking/NeoTokyoStaker.sol#L825](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L825)
 - [contracts/staking/NeoTokyoStaker.sol#L826](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L826)
 - [contracts/staking/NeoTokyoStaker.sol#L1739](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1739)
@@ -37,20 +61,31 @@ Instances: 12
 - [contracts/staking/NeoTokyoStaker.sol#L1820](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1820)
 
 &nbsp;
-## [G-02] Duplicated `require`/`revert` checks should be refactored to a modifier or function.
-
-Instances: 2
-- [contracts/staking/NeoTokyoStaker.sol#L784](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L784)
-- [contracts/staking/NeoTokyoStaker.sol#L812](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L812)
-
-&nbsp;
-## [G-03] Use `indexed` to save gas
+## [G-02] Use `indexed` to save gas
 Using `indexed` for value type event parameters (address, uint, bool) saves at least 80 gas in emitting the event (https://gist.github.com/Tomosuke0930/9bf61e01a8c3e214d95a9b84dcb41d97).
 
 Note that for other types however (string, bytes), it is more expensive.
 
 Instances: 6
+```solidity
+File: contracts/staking/BYTES2.sol
+
+63: 		uint256 amount
+```
 - [contracts/staking/BYTES2.sol#L63](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L63)
+```solidity
+File: contracts/staking/NeoTokyoStaker.sol
+
+542:		uint256 timelockOption,
+
+543:		uint256 amountOrTokenId
+
+555:		uint256 reward,
+
+556:		uint256 tax
+
+570:		uint256 amountOrTokenId
+```
 - [contracts/staking/NeoTokyoStaker.sol#L542](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L542)
 - [contracts/staking/NeoTokyoStaker.sol#L543](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L543)
 - [contracts/staking/NeoTokyoStaker.sol#L555](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L555)
@@ -58,33 +93,36 @@ Instances: 6
 - [contracts/staking/NeoTokyoStaker.sol#L570](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L570)
 
 &nbsp;
-## [G-04] Cache length outside of for loop
+## [G-03] Expressions for constant values such as a call to `keccak256` should use `immutable` rather than `constant`
+When left as `constant`, the value is re-calculated each time it is used instead of being converted to a constant at compile time. This costs an extra ~100 gas for each access.
 
-Currently, the solidity compiler will always read the length of the array during each iteration.
-
-That is, if it is a storage array, thisis an extra sload operation (100 additional extra gas for each iteration except for the first) and if it is a memory array, this is an extra mload operation (3 additional gas for each iteration except for the first).
-
-Instances: 11
-- [contracts/staking/NeoTokyoStaker.sol#L717](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L717)
-- [contracts/staking/NeoTokyoStaker.sol#L734](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L734)
-- [contracts/staking/NeoTokyoStaker.sol#L1279](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1279)
-- [contracts/staking/NeoTokyoStaker.sol#L1288](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1288)
-- [contracts/staking/NeoTokyoStaker.sol#L1499](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1499)
-- [contracts/staking/NeoTokyoStaker.sol#L1564](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1564)
-- [contracts/staking/NeoTokyoStaker.sol#L1742](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1742)
-- [contracts/staking/NeoTokyoStaker.sol#L1765](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1765)
-- [contracts/staking/NeoTokyoStaker.sol#L1787](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1787)
-- [contracts/staking/NeoTokyoStaker.sol#L1806](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1806)
-- [contracts/staking/NeoTokyoStaker.sol#L1822](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1822)
-
-&nbsp;
-## [G-05] Expressions for constant values such as a call to `keccak256` should use `immutable` rather than `constant`
+Using `immutable` only incurs the gas costs for the computation at deploy time.
 
 See [here](https://github.com/ethereum/solidity/issues/9232) for a detailed description of the issue.
 
 Instances: 7
+```solidity
+File: contracts/staking/BYTES2.sol
+
+37:	bytes32 public constant BURN = keccak256("BURN");
+
+40:	bytes32 public constant ADMIN = keccak256("ADMIN");
+```
 - [contracts/staking/BYTES2.sol#L37](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L37)
 - [contracts/staking/BYTES2.sol#L40](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L40)
+```solidity
+File: contracts/staking/NeoTokyoStaker.sol
+
+206:	bytes32 public constant CONFIGURE_LP = keccak256("CONFIGURE_LP");
+
+209:	bytes32 public constant CONFIGURE_TIMELOCKS = keccak256(
+
+214:	bytes32 public constant CONFIGURE_CREDITS = keccak256("CONFIGURE_CREDITS");
+
+217:	bytes32 public constant CONFIGURE_POOLS = keccak256("CONFIGURE_POOLS");
+
+220:	bytes32 public constant CONFIGURE_CAPS = keccak256("CONFIGURE_CAPS");
+```
 - [contracts/staking/NeoTokyoStaker.sol#L206](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L206)
 - [contracts/staking/NeoTokyoStaker.sol#L209](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L209)
 - [contracts/staking/NeoTokyoStaker.sol#L214](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L214)
@@ -92,34 +130,55 @@ Instances: 7
 - [contracts/staking/NeoTokyoStaker.sol#L220](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L220)
 
 &nbsp;
-## [G-06] Use `unchecked` for operations that cannot overflow/underflow
+## [G-04] Functions guaranteed to revert when called by normal users can be marked `payable`
 
-By bypassing Solidity's built in overflow/underflow checks using `unchecked`, we can save gas. This is especially beneficial for the index variable within for loops (saves 120 gas per iteration).
+If a function modifier such as `hasValidPermit` is used, the function will revert if a normal user tries to pay the function. Marking the function as payable will lower the gas cost for legitimate callers because the compiler will not include checks for whether a payment was provided.
 
-Instances: 4
-- [contracts/staking/NeoTokyoStaker.sol#L1283](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1283)
-- [contracts/staking/NeoTokyoStaker.sol#L1292](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1292)
-- [contracts/staking/NeoTokyoStaker.sol#L1298](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1298)
-- [contracts/staking/NeoTokyoStaker.sol#L1442](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1442)
+The extra opcodes avoided are CALLVALUE(2), DUP1(3), ISZERO(3), PUSH2(3), JUMPI(10), PUSH1(3), DUP1(3), REVERT(0), JUMPDEST(1), POP(2), which costs an average of about 21 gas per call to the function, in addition to the extra deployment cost (2400 per instance).
+
+Instances: 11
+```solidity
+File: contracts/staking/BYTES2.sol
+
+140:	function burn (
+
+162:	function changeStakingContractAddress (
+
+173:	function changeTreasuryContractAddress (
+```
+- [contracts/staking/BYTES2.sol#L140](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L140)
+- [contracts/staking/BYTES2.sol#L162](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L162)
+- [contracts/staking/BYTES2.sol#L173](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L173)
+```solidity
+File: contracts/staking/NeoTokyoStaker.sol
+
+1708:	function configureLP (
+
+1721:	function lockLP () external hasValidPermit(UNIVERSAL, CONFIGURE_LP) {
+
+1737:	function configureTimelockOptions (
+
+1760:	function configureIdentityCreditYields (
+
+1783:	function configureIdentityCreditPoints (
+
+1802: 	function configureVaultCreditMultipliers (
+
+1819: 	function configurePools (
+
+1851:	function configureCaps (
+```
+- [contracts/staking/NeoTokyoStaker.sol#L1708](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1708)
+- [contracts/staking/NeoTokyoStaker.sol#L1721](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1721)
+- [contracts/staking/NeoTokyoStaker.sol#L1737](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1737)
+- [contracts/staking/NeoTokyoStaker.sol#L1760](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1760)
+- [contracts/staking/NeoTokyoStaker.sol#L1783](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1783)
+- [contracts/staking/NeoTokyoStaker.sol#L1802](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1802)
+- [contracts/staking/NeoTokyoStaker.sol#L1819](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1819)
+- [contracts/staking/NeoTokyoStaker.sol#L1851](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1851)
 
 &nbsp;
-## [G-07] `++i` costs less gas than `i++`
-
-True for `--i`/`i--` as well, and is especially important in for loops. Saves 5 gas per iteration.
-
-Instances: 9
-- [contracts/staking/NeoTokyoStaker.sol#L728](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L728)
-- [contracts/staking/NeoTokyoStaker.sol#L743](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L743)
-- [contracts/staking/NeoTokyoStaker.sol#L1284](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1284)
-- [contracts/staking/NeoTokyoStaker.sol#L1293](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1293)
-- [contracts/staking/NeoTokyoStaker.sol#L1369](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1369)
-- [contracts/staking/NeoTokyoStaker.sol#L1383](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1383)
-- [contracts/staking/NeoTokyoStaker.sol#L1509](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1509)
-- [contracts/staking/NeoTokyoStaker.sol#L1574](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1574)
-- [contracts/staking/NeoTokyoStaker.sol#L1838](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1838)
-
-&nbsp;
-## [G-08] `_stringEquals` can be optimized
+## [G-05] `_stringEquals` can be optimized
 
 When checking for equality of two strings, one can use `keccak256` as follows:
 
@@ -132,4 +191,14 @@ function _stringEquals(string memory _a, string memory _b) public pure returns (
 This saves ~20,000 gas on deployment when the original lengthy `_stringEquals` function is replaced, and ~150 gas per call. `_stringEquals` appears in `_stakeS1Citizen` which is in scope.
 
 Instances: 1
+```solidity
+824:	function _stringEquals (
+            string memory _a,
+            string memory _b
+        ) private pure returns (bool) {
+
+            // ...
+
+865:    }
+```
 - [contracts/staking/NeoTokyoStaker.sol#L824-865](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L824-L865)
