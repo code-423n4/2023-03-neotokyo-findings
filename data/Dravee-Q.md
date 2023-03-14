@@ -96,7 +96,7 @@ index 231f47d..5fded43 100644
 +```
 ```
 
-In the code above, an attacker is just spamming `BYTES2.getReward()` over 1000 transactions. The ONLY directly visible effect is that of a gas-less transaction gift from an "attacker".
+In the code above, an attacker is just spamming `BYTES2.getReward()` over 1000 transactions to trigger the reward-claiming mechanism for Bob. The ONLY directly visible effect is that of a gas-less transaction gift from an "attacker" to Bob.
 
 This direct call is used at multiple places in the code (in both `NTCitizenDeploy` and `NeoTokyoStaker`), which is fine, but giving the possibility for anyone to claim on behalf on anyone might be wrong. While it could be seen as a gift (thanks for the gas), the staker might have their own reasons and restrictions (taxes, accounting) for not claiming their reward before a certain date. What if:
 
@@ -106,7 +106,7 @@ This direct call is used at multiple places in the code (in both `NTCitizenDeplo
 - Bob calls `BYTES2.getReward()` with Alice's address during December 31st 2023, forcing her to claim her rewards
 - Alice will now need to change her company's status in 2024 due to having earned too much in 2023. And she'll need to edit her taxes
 
-This can therefore be damaging in unforeseen ways.
+This can therefore be damaging (and annoying) in unforeseen ways.
 
 Consider only allowing Citizens, the Staker contract and `msg.sender == _to` to call `BYTES2.getReward()`:
 
