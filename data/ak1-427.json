@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "ak1",
+  "risk": "3",
+  "title": "All sort of staking like S1, S2 and LP stakes are not checking the actual time that is going to be locked.",
+  "issueId": 427,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/427"
+}
