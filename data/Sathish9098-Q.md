@@ -201,6 +201,11 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1668-L1669)
 
+Recommended Mitigation:
+
+Use OpenZeppelin safeCast library 
+
+
 ##
 
 ### [7] Gas griefing/theft is possible on unsafe external call
@@ -257,6 +262,10 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 	}
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1708-L1715)
 
+Recommended Mitigation Steps :
+
+Add events for every critical changes happen in protocol with old and new values 
+
 ##
 
 ### [L-9] Tokens accidentally sent to the contract cannot be recovered
@@ -282,8 +291,18 @@ Add this code:
   }
 }
 
+##
+
+### [L-10] Use safest version of openzeppelin/contracts-upgradeable instead of vulnerable one
+
+"@openzeppelin/contracts-upgradeable": "^4.4.2" version used in this protocol
+
+Recommended mitigation:
+
+Use safest openzeppelin version 4.8.2
+
   
-# NONCRITICAL FINDINGS ()
+# NONCRITICAL FINDINGS 
 
 ##
 
@@ -739,7 +758,7 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
 ##
 
-### [18] Use a single file for all system-wide constants
+### [16] Use a single file for all system-wide constants
 
 There are many addresses and constants used in the system. It is recommended to put the most used ones in one file (for example constants.sol, use inheritance to access these values).
 
@@ -772,7 +791,7 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
 ##
 
-### [19] Assembly Codes Specific – Should Have Comments
+### [17] Assembly Codes Specific – Should Have Comments
 
 Since this is a low level language that is more difficult to parse by readers, include extensive documentation, comments on the rationale behind its use, clearly explaining what each assembly instruction does.
 
@@ -822,6 +841,41 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1682)
 
+##
+
+### [18] Convert repeated validation statements into a function modifier to improve code reusability
+
+ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol 
+
+   693:  if (_assetType == AssetType.S1_CITIZEN) {
+   1278: if (_assetType == AssetType.S1_CITIZEN) {
+
+ [NeoTokyoStaker.sol#L693](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L693),[NeoTokyoStaker.sol#L1278](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1278)
+
+   1287: 	} else if (_assetType == AssetType.S2_CITIZEN) {
+   695:         } else if (_assetType == AssetType.S2_CITIZEN) {
+
+[NeoTokyoStaker.sol#L1287](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1287),[NeoTokyoStaker.sol#L695](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L695)
+
+   1071: if (citizenStatus.timelockEndTime == 0) {
+   1092: if (citizenStatus.timelockEndTime == 0) {
+
+[NeoTokyoStaker.sol#L1071](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1071),[NeoTokyoStaker.sol#L1092](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1092)
+
+   1472: if (stakedCitizen.timelockEndTime == 0) {
+   1547: if (stakedCitizen.timelockEndTime == 0) {
+
+[NeoTokyoStaker.sol#L1472](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1472),[NeoTokyoStaker.sol#L1547](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1547)
+
+   1477: if (stakedCitizen.stakedBytes > 0) {
+   1552: if (stakedCitizen.stakedBytes > 0) {
+
+[NeoTokyoStaker.sol#L1477](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1477),[NeoTokyoStaker.sol#L1552](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1552)
+
+   1502: if (citizenId == oldPosition[stakedIndex]) {
+   1567: if (citizenId == oldPosition[stakedIndex]) {
+
+[NeoTokyoStaker.sol#L1502](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1502),[NeoTokyoStaker.sol#L1567](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1567)
 
 
 
