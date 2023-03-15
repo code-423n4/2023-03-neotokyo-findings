@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "ctrlc03",
+  "risk": "2",
+  "title": "Possibile denial of service resulting in assets being stuck due to block gas limit",
+  "issueId": 236,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/236"
+}
