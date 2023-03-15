@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "0xWeiss",
+  "risk": "3",
+  "title": "Wrong initialization due to no-input validation would lead to infinite minting",
+  "issueId": 320,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/320"
+}
