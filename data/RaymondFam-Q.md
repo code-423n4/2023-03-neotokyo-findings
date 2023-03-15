@@ -1,3 +1,24 @@
+## Improper use of `<<`
+I have separately submitted a vulnerability report on `>>`, but since `<<` in this instance concerns only an emitted event, I am including this issue in this QA report.
+
+[File: NeoTokyoStaker.sol#L1110-L1115](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1110-L1115)
+
+```solidity
+		emit Stake(
+			msg.sender,
+			BYTES,
+			(seasonId << 128) + citizenId,
+			amount
+		);
+```
+As can be seen from the code block above, `seasonId` which is either [`1`](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1060) or [`2`](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1084) is multiplied by 2 ** 128.
+
+The implication on off chain logging is going to incur great confusion and difficulty in data interpretation as the third parameter of the emitted output entails one of the two very big numbers plus `citizenId`.
+
+If `seasonId == 1`, it will be `340282366920938463463374607431768211456 + citizenId`.
+
+If `seasonId == 2`, it will be `680564733841876926926749214863536422912 + citizenId`.  
+
 ## Minimization of truncation
 Multiple divisions in an arithmetic calculations may be reduced to one division to minimize the frequency of truncation. 
 
