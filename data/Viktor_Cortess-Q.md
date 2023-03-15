@@ -185,3 +185,13 @@ For example, during staking, you can add an internal function _setTime(msg.sende
 And also add if statements for writing lastTimeRewards inside the function getPoolReward during rewards counting for each asset Type:
 
     if (_assetType == AssetType.LP) lastRewardTime[_recipient][AssetType.LP] = block.timestamp;
+
+### [L] DIVISION BEFORE MULTIPLICATION CAN LEAD TO LOSSES IN PRECISION
+
+it is recommended to perform multiplication before division to avoid loss of precision when working with integer types.
+
+When dividing two integers, the result is rounded down to the nearest integer. This can lead to unexpected results when working with fractions or decimals, especially when performing multiple operations in succession.
+
+**contracts\staking\NeoTokyoStaker.sol**
+
+    1155: uint256 points = amount * 100 / 1e18 * timelockMultiplier / _DIVISOR;
