@@ -1,18 +1,19 @@
 **Overview**
 Risk Rating | Number of issues
 --- | ---
-Low Risk | 6
+Low Risk | 7
 Non-Critical Risk | 9
 
 **Table of Contents**
 
 - [1. Low Risk Issues](#1-low-risk-issues)
   - [1.1. The `uint8(_assetType) > 4` check is wrong and unnecessary due to a vacuous truth](#11-the-uint8_assettype--4-check-is-wrong-and-unnecessary-due-to-a-vacuous-truth)
-  - [1.2. Using `transferFrom` on ERC721 tokens](#12-using-transferfrom-on-erc721-tokens)
-  - [1.3. `_assetTransferFrom` is used both for ERC721 and ERC20](#13-_assettransferfrom-is-used-both-for-erc721-and-erc20)
-  - [1.4. Known vulnerabilities exist in currently used `@openzeppelin/contracts` version](#14-known-vulnerabilities-exist-in-currently-used-openzeppelincontracts-version)
-  - [1.5. No event emitted when updating a state variable](#15-no-event-emitted-when-updating-a-state-variable)
-  - [1.6. `NeoTokyoStaker.getStakerPosition()` is clunky](#16-neotokyostakergetstakerposition-is-clunky)
+  - [1.2. `NeoTokyoStaker._stakeLP`: Check that stakes will earn points](#12-neotokyostaker_stakelp-check-that-stakes-will-earn-points)
+  - [1.3. Using `transferFrom` on ERC721 tokens](#13-using-transferfrom-on-erc721-tokens)
+  - [1.4. `_assetTransferFrom` is used both for ERC721 and ERC20](#14-_assettransferfrom-is-used-both-for-erc721-and-erc20)
+  - [1.5. Known vulnerabilities exist in currently used `@openzeppelin/contracts` version](#15-known-vulnerabilities-exist-in-currently-used-openzeppelincontracts-version)
+  - [1.6. No event emitted when updating a state variable](#16-no-event-emitted-when-updating-a-state-variable)
+  - [1.7. `NeoTokyoStaker.getStakerPosition()` is clunky](#17-neotokyostakergetstakerposition-is-clunky)
 - [2. Non-Critical Issues](#2-non-critical-issues)
   - [2.1. `BYTES2.getReward()`'s naming is confusing](#21-bytes2getrewards-naming-is-confusing)
   - [2.2. Avoid using magic numbers instead of the existing enum's values](#22-avoid-using-magic-numbers-instead-of-the-existing-enums-values)
@@ -83,7 +84,21 @@ Furthermore, `uint8(_assetType) > 4` is a wrong check as it doesn't exclude `4` 
 
 I suggest deleting those as they can never happen. But if you insist on them existing just to be reassured, consider either replacing those by `uint8(_assetType) >= 4` or `uint8(_assetType) > 3`, as these would be the right checks.
 
-## 1.2. Using `transferFrom` on ERC721 tokens
+## 1.2. `NeoTokyoStaker._stakeLP`: Check that stakes will earn points
+
+In the following [LP stake scenario](https://github.com/code-423n4/2023-03-neotokyo/blob/main/test/NeoTokyoStaker.test.js#L760-L766), Bob is staking `10e18` LP tokens and [earning 4000 points as a result](https://github.com/code-423n4/2023-03-neotokyo/blob/main/test/NeoTokyoStaker.test.js#L785).
+
+If we tweak the test so that Bob stakes 1/1000 of that amount (`0.01e18`), the result would be 4 points.
+
+However, if we tweak further the test so that Bob stakes `0.0099999e18`, the result is 0 point. It would've been legitimate to believe that the minimum would've been `0.0025e18` for 1 point but it instead directly drops to 0 under `0.01e18`.
+
+While this is an edge case that may seem negligible, it shouldn't be possible for the user to stake his LP tokens and not earn anything in return.
+
+Additionally, each point is actually [worth `200 * 1e18` BYTES](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L203), so not being able to earn below 4 points here might be unexpected.
+
+Consider adding an `assert` in `_stakeLP` checking `points > 0`.
+
+## 1.3. Using `transferFrom` on ERC721 tokens
 
 The `transferFrom` function is used instead of `safeTransferFrom` here, and [it's discouraged by OpenZeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/109778c17c7020618ea4e035efb9f0f9b82d43ca/contracts/token/ERC721/IERC721.sol#L84). We can even find this warning at multiple places in the contest repo here:
 
@@ -143,7 +158,7 @@ Notice that [the following](https://github.com/code-423n4/2023-03-neotokyo/blob/
 + bytes4 constant private _SAFE_TRANSFER_FROM_SELECTOR = 0x42842e0e;
 ```
 
-## 1.3. `_assetTransferFrom` is used both for ERC721 and ERC20
+## 1.4. `_assetTransferFrom` is used both for ERC721 and ERC20
 
 Just like mentioned in the comment [here](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L190-L191), the `transferFrom` selector is used both for ERC-20 and ERC-721 tokens:
 
@@ -172,7 +187,7 @@ contracts/staking/NeoTokyoStaker.sol:
 
 Hence, `_TRANSFER_FROM_SELECTOR` will only be used for ERC20 tokens and the previously suggested `_SAFE_TRANSFER_FROM_SELECTOR` will be used only for ERC721 tokens.
 
-## 1.4. Known vulnerabilities exist in currently used `@openzeppelin/contracts` version
+## 1.5. Known vulnerabilities exist in currently used `@openzeppelin/contracts` version
 
 As some [known vulnerabilities](https://snyk.io/test/npm/@openzeppelin/contracts/4.3.1) exist in the current `@openzeppelin/contracts` version, consider updating `package.json` with at least `@openzeppelin/contracts@4.7.3` here: <https://github.com/code-423n4/2023-03-neotokyo/blob/main/package.json#L23>
 
@@ -180,7 +195,7 @@ The only vulnerability that seems to affect this project is the following:
 
 - [Information Exposure](https://security.snyk.io/vuln/SNYK-JS-OPENZEPPELINCONTRACTS-2958047)
 
-## 1.5. No event emitted when updating a state variable
+## 1.6. No event emitted when updating a state variable
 
 The configuration methods in `NeoTokyoStaker` don't emit events:
 
@@ -200,7 +215,7 @@ The change methods in `BYTES2` don't emit events:
 
 Not emitting events when changing state variables is a bad practice and can be seen as a trust issue
 
-## 1.6. `NeoTokyoStaker.getStakerPosition()` is clunky
+## 1.7. `NeoTokyoStaker.getStakerPosition()` is clunky
 
 It's only possible to fetch the S1 Citizen or S2 Citizen types through [getStakerPosition()](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L689-L700), otherwise the documentation asks to use the [public variables for LP assets](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L676-L677) and the [full output of getStakerPositions()](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L678-L679) for BYTES.
 
@@ -514,4 +529,4 @@ NeoTokyoStaker.sol:8:import "../interfaces/IGenericGetter.sol";
 
 ## 2.9. Function ordering does not follow the Solidity style guide
 
-According to the [Solidity style guide](https://docs.soliditylang.org/en/v0.8.17/style-guide.html#order-of-functions), functions should be laid out in the following order :`constructor()`, `receive()`, `fallback()`, `external`, `public`, `internal`, `private`, but `NeoTokyoStaker` doesn't follow this pattern
+According to the [Solidity style guide](https://docs.soliditylang.org/en/v0.8.17/style-guide.html#order-of-functions), functions should be laid out in the following order: `constructor()`, `receive()`, `fallback()`, `external`, `public`, `internal`, `private`, but `NeoTokyoStaker` doesn't follow this pattern
