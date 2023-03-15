@@ -924,5 +924,3 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
 
 
-NC-1	Typos	7
-L-1	Empty Function Body - Consider commenting why	2
