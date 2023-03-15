@@ -1,4 +1,4 @@
-# [N-01] Incorrect description in NatSpec comment of parameter
+# [L-01] Incorrect description in NatSpec comment of parameter
 ## Context 
 https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L70
 
@@ -26,7 +26,7 @@ The parameter specifies the ```_bytes``` parameter is of type ```BYTES 2.0 ERC-2
 ## Resolution
 Correct the description in the NatSpec comment
 
-# [N-02] Input parameters are not checked in constructor
+# [L-02] Input parameters are not checked in constructor
 ## Context 
 Constructor function:BYTES2.sol
 ```
@@ -53,7 +53,7 @@ The input values into the constructor are never checked in any way and the rest 
 ## Resolution
 Check the input addresses for address(0) and perhaps that they are indeed contracts.
 
-# [N-03] Even if the AssetType is invalid the code to check for InvalidAsseType will never be reached.
+# [L-03] Even if the AssetType is invalid the code to check for InvalidAsseType will never be reached.
 ## Context 
 https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1264-L1302
 
@@ -102,7 +102,7 @@ https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062
 If an invalid asset value is sent in, it will not enter the if statement ```if (pool.totalPoints != 0) {```, and the ```revert InvalidAssetType(uint256(_assetType));``` will never be reached.
 ## Resolution
 Either remove the unreachable code or implement the check higher up in the method.
-# [N-04] Incorrect check for AssetType values in if statements
+# [L-04] Incorrect check for AssetType values in if statements
 ## Context 
 https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1196-L1207
 
@@ -135,7 +135,7 @@ The checks above all check if the input parameter is greater than 4 instead of g
 ## Resolution
 Correct the value in if statements.
 
-# [N-05] Input parameter of type array,the lengths are not checked to be equal
+# [L-05] Input parameter of type array,the lengths are not checked to be equal
 ## Context 
 https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1737-L1746
 ```
@@ -200,7 +200,7 @@ In the above functions the array values correspond to each other via the index i
 ## Resolution
 Implement checks to require array length's to be equal.
 
-# [N-06] Input parameters are not checked in configuring LPtoken contract address. It does not check for zero address.
+# [L-06] Input parameters are not checked in configuring LPtoken contract address. It does not check for zero address.
 ## Context 
 https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1708-L1715
 ```
@@ -219,7 +219,7 @@ The value of _lp input parameter is not checked if it is a valid contract or if 
 ## Resolution
 Implement checks for the _lp input parameter like codesize checks and not equal to address(0).
 
-# [N-07] Functions called by privileged users and that make significant changes to the contract state variables should emit events.
+# [L-07] Functions called by privileged users and that make significant changes to the contract state variables should emit events.
 ## Context 
 https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L173
 ```function changeTreasuryContractAddress (```
