@@ -12,8 +12,67 @@ contracts/staking/BYTES2.sol
 
 101:		IByteContract(BYTES1).burn(msg.sender, _amount); 
 ```
+---
+## SWC-131 Unused variable
+
+```solidity
+contracts/staking/BYTES2.sol
+
+46:	address immutable public S1_CITIZEN;
+```
+the variable is initialized but not used anywhere
 
 ---
+## There is no direct connection between the implementation and the interface
+
+```solidity
+contracts/staking/BYTES2.sol
+
+34:   contract BYTES2 is PermitControl, ERC20("BYTES", "BYTES")
+
+contracts/staking/NeoTokyoStaker.sol
+188: contract NeoTokyoStaker is PermitControl, ReentrancyGuard {
+
+```
+Contract `BYTES2` must follow the interface `IByteContract`.
+Contract `NeoTokyoStaker` must follow the interface `IStaker`.
+
+To avoid possible non-compliance with the interface contract. And adding a compile-time check for compliance
+Example:
+```solidity
+contract NeoTokyoStaker is IStaker, PermitControl, ReentrancyGuard
+```
+```solidity
+contract BYTES2 is IBytesContract, PermitControl, ERC20("BYTES", "BYTES")
+```
+---
+
+## Missed events for important events
+Violation of standard practices for throwing events at important events. That makes it difficult to catch important actions
+
+```solidity
+contracts/staking/BYTES2.sol
+
+162:	function changeStakingContractAddress
+173:	function changeTreasuryContractAddress
+
+contracts/staking/NeoTokyoStaker.sol
+
+1708:	function configureLP
+1721:	function lockLP
+1737:	function configureTimelockOptions
+1760:	function configureIdentityCreditYields
+1783:	function configureIdentityCreditPoints 
+1802:	function configureVaultCreditMultipliers
+1819:	function configurePools
+1851:	function configureCaps
+
+```
+Example:
+User would like to track the moment of the configuration to be the first to stake and get an increased reward for the first blocks, etc.
+
+User would like to know the moment when the administration will change something in order to quickly react to it
+
 ## Someone can call `getReward` for another user
 A method call by user A for user B may cause user B can to miss out on some benefit (using the windows issue for earning extra rewards as an example)
 
