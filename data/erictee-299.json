@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "erictee",
+  "risk": "2",
+  "title": "Division before multiplication incurs unnecessary precision loss",
+  "issueId": 299,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/299"
+}
