@@ -2,9 +2,9 @@
 
 |         | Issue                                                                           | Instances |
 | ------- | :------------------------------------------------------------------------------ | :-------: |
-| [G-006] | x += y or x -= y costs more gas than x = x + y or x = x - y for state variables |     5     |
+| [G-001] | x += y or x -= y costs more gas than x = x + y or x = x - y for state variables |     5     |
 
-## [G-006] x += y or x -= y costs more gas than x = x + y or x = x - y for state variables
+## [G-001] x += y or x -= y costs more gas than x = x + y or x = x - y for state variables
 
 ### Impact
 
