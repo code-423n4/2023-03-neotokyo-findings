@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "ck",
+  "risk": "3",
+  "title": "DOS due to excessive gas consumption if number of stakers is too high",
+  "issueId": 264,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/264"
+}
