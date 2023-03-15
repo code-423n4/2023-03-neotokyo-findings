@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "rbserver",
+  "risk": "2",
+  "title": "`NeoTokyoStaker.getPoolReward` function can be frontrun, which can cause staker and DAO to lose reward shares that they are entitled to",
+  "issueId": 380,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/380"
+}
