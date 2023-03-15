@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "minhquanym",
+  "risk": "3",
+  "title": "Staking BYTES to Citizen does not extend timelock, allowing attacker to manipulate `totalPoints` with flash loan",
+  "issueId": 350,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/350"
+}
