@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "Bjorn_bug",
+  "risk": "2",
+  "title": "Users can claims others users Rewards on  their behalf at getReward() function",
+  "issueId": 391,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/391"
+}
