@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "joestakey",
+  "risk": "2",
+  "title": "User staking an amount of `BYTES` too low for bonus essentially freezes their `BYTES` for the timelock period",
+  "issueId": 425,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/425"
+}
