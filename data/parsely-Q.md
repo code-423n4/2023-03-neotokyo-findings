@@ -130,7 +130,7 @@ enum AssetType {
 		LP
 	}
 ```
-The checks above all check if the input parameter is greater than 4 instead of greater than 3. This bypasses the check for ```InvalidAssetType```. Although the code does revert and the impact is low it is good practice to catch errors before they are reported by the EVM, and revert with a custom error.
+The checks above all check if the input parameter is greater than 4 instead of greater than 3. This bypasses the check for ```InvalidAssetType```.
 
 ## Resolution
 Correct the value in if statements.
@@ -200,7 +200,7 @@ In the above functions the array values correspond to each other via the index i
 ## Resolution
 Implement checks to require array length's to be equal.
 
-# [N-06] Input parameters are not checked in configuring LPtoken contract address. does not check for zero address.
+# [N-06] Input parameters are not checked in configuring LPtoken contract address. It does not check for zero address.
 ## Context 
 https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1708-L1715
 ```
