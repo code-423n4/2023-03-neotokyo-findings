@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "rbserver",
+  "risk": "2",
+  "title": "`NeoTokyoStaker._stakeLP` and `NeoTokyoStaker.getPoolReward` functions perform division before multiplication while `NeoTokyoStaker._stakeS1Citizen` does not",
+  "issueId": 387,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/387"
+}
