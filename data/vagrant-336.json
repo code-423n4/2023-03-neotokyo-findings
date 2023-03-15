@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "vagrant",
+  "risk": "3",
+  "title": "Not multiplying before dividing incurs heavy loss on points for staking LP tokens",
+  "issueId": 336,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/336"
+}
