@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "minhquanym",
+  "risk": "3",
+  "title": "Wrong accounting of share leading to incorrect amount of BYTES be minted per second",
+  "issueId": 347,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/347"
+}
