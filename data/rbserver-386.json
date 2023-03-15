@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "rbserver",
+  "risk": "2",
+  "title": "Staker can fail to increase `stakerLPPosition[msg.sender].points` when calling `NeoTokyoStaker._stakeLP` function",
+  "issueId": 386,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/386"
+}
