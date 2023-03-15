@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "0xSolus",
+  "risk": "2",
+  "title": "In `getPoolReward()` the variable `lastPoolRewardTime` in `NeoTokyoStaker.sol` is not properly initialized for first time stakers.",
+  "issueId": 250,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/250"
+}
