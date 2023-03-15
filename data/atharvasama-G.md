@@ -113,7 +113,7 @@ It would be slightly cheaper to declare the variable and simply use an if statem
 ```
 
 ## [G-06] UNNECESSARY CAST TO UINT8
-Some gas can be saved by avoiding the cast to uint8 while checking.  
+Some gas can be saved by casting to uint256 while checking instead of uint8. 
 
 [contracts\staking\NeoTokyoStaker.sol](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol)
 ```js
