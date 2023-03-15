@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "rbserver",
+  "risk": "2",
+  "title": "Executing `getCreditYield(citizenId, citizenVaultId)` in `NeoTokyoStaker._stakeS1Citizen` function can cause `identityPoints` to be lower than it should be when corresponding S1 Citizen to be staked does not have a component vault but an optional vault is provided",
+  "issueId": 393,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/393"
+}
