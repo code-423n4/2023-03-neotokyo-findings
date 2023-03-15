@@ -223,12 +223,66 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L772-L780)
 
+##
+
+### [L-8] Add an event for critical parameter changes
+
+Adding events for critical parameter changes will facilitate offchain monitoring and indexing
+
+FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
+
+       function changeStakingContractAddress (
+		address _staker
+	) hasValidPermit(UNIVERSAL, ADMIN) external {
+		STAKER = _staker;
+	}
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L162-L166)
+
+       function changeTreasuryContractAddress (
+		address _treasury
+	) hasValidPermit(UNIVERSAL, ADMIN) external {
+		TREASURY = _treasury;
+	}
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L173-L177)
+
+     function configureLP (
+		address _lp
+	) external hasValidPermit(UNIVERSAL, CONFIGURE_LP) {
+		if (lpLocked) {
+			revert LockedConfigurationOfLP();
+		}
+		LP = _lp;
+	}
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1708-L1715)
+
+##
+
+### [L-9] Tokens accidentally sent to the contract cannot be recovered
+
+It can’t be recovered if the tokens accidentally arrive at the contract address, which has happened to many popular projects, so I recommend adding a recovery code to your critical contracts.
+
+Recommended Mitigation Steps
+
+Add this code:
+
+ /**
+  * @notice Sends ERC20 tokens trapped in contract to external address
+  * @dev Onlyowner is allowed to make this function call
+  * @param account is the receiving address
+  * @param externalToken is the token being sent
+  * @param amount is the quantity being sent
+  * @return boolean value indicating whether the operation succeeded.
+  *
+ */
+  function rescueERC20(address account, address externalToken, uint256 amount) public onlyOwner returns (bool) {
+    IERC20(externalToken).transfer(account, amount);
+    return true;
+  }
+}
+
   
-
-
-
-  
-
 # NONCRITICAL FINDINGS ()
 
 ##
@@ -332,10 +386,18 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
    52: address public TREASURY;
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L49-L52)
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+   232: address public LP;
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L232)
 
 ##
 
 ### [5] Use @notice tag to explain the functions as per NATSPEC instructions
+
+CONTEXT: 
+ALL FUNCTIONS
 
 When this function is compiled, the Natspec comments containing the @notice and @param tags are included in the contract's metadata
 
@@ -674,30 +736,6 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1668-L1669)
 
-##
-
-### [17] Tokens accidentally sent to the contract cannot be recovered
-
-It can’t be recovered if the tokens accidentally arrive at the contract address, which has happened to many popular projects, so I recommend adding a recovery code to your critical contracts.
-
-Recommended Mitigation Steps
-
-Add this code:
-
- /**
-  * @notice Sends ERC20 tokens trapped in contract to external address
-  * @dev Onlyowner is allowed to make this function call
-  * @param account is the receiving address
-  * @param externalToken is the token being sent
-  * @param amount is the quantity being sent
-  * @return boolean value indicating whether the operation succeeded.
-  *
- */
-  function rescueERC20(address account, address externalToken, uint256 amount) public onlyOwner returns (bool) {
-    IERC20(externalToken).transfer(account, amount);
-    return true;
-  }
-}
 
 ##
 
@@ -783,6 +821,10 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
   1682: assembly {
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1682)
+
+
+
+
 
   
 
