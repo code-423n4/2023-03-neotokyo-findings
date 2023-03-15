@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "mrudenko",
+  "risk": "2",
+  "title": "Unvalidated input in setManagerRight function",
+  "issueId": 436,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/436"
+}
