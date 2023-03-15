@@ -275,7 +275,7 @@ In getPoolReward, there is an excessive iteration through the tokens staked to c
 
 ### [QA-4] Unnecessary sanity check for argument
 
-- There are unecessary sanity checks, in the case of enum argument, the compiler automatically ensures that the value being inputted is a valid value, the following checks are not needed:
+- There are unnecessary sanity checks, in the case of enum argument, the compiler automatically ensures that the value being inputted is a valid value, the following checks are not needed:
 
 ```diff
     function stake(AssetType _assetType, uint256 _timelockId, uint256, uint256, uint256) external nonReentrant {
