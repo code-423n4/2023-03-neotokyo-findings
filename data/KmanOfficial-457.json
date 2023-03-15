@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "KmanOfficial",
+  "risk": "2",
+  "title": "If all LP staked tokens are withdrawn, set timelockEndTime to 0 too",
+  "issueId": 457,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/457"
+}
