@@ -6,3 +6,10 @@
 			revert InvalidAssetType(uint256(_assetType));
 		}
 ```
+This is also an issue in the `withdraw()` function
+
+```solidity
+		if (uint8(_assetType) == 2 || uint8(_assetType) > 4) {
+			revert InvalidAssetType(uint256(_assetType));
+		}
+```
