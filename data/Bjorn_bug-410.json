@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "Bjorn_bug",
+  "risk": "2",
+  "title": "Permit authorized callers can burn any amount of BYTES 2.0 tokens from an arbitrary address",
+  "issueId": 410,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/410"
+}
