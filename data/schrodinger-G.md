@@ -6,12 +6,11 @@
 | [GAS-1](#GAS-1) | Avoid contract existence checks by using low level calls | 18 |
 | [GAS-2](#GAS-2) | `<x> += <y>` costs more gas than `<x> = <x> + <y>` for state variables | 22 |
 | [GAS-3](#GAS-3) | Optimize names to save gas | 2 |
-| [GAS-4](#GAS-4) | Splitting ``require() statements that use && saves gas | 4 |
-| [GAS-5](#GAS-5) | Using `calldata` instead of `memory` in external functions saves gas | 9 |
-| [GAS-6](#GAS-6) | Multiple accesses of a mapping/array should use a local variable cache | 24 |
-| [GAS-7](#GAS-7) | State variables should be cached in stack variables rather than re-reading them from storage | 8 |
+| [GAS-4](#GAS-4) | Using `calldata` instead of `memory` in external functions saves gas | 9 |
+| [GAS-5](#GAS-5) | Multiple accesses of a mapping/array should use a local variable cache | 24 |
+| [GAS-6](#GAS-6) | State variables should be cached in stack variables rather than re-reading them from storage | 8 |
 
-**Total 87 instances found in 7 issues**
+**Total 83 instances found in 6 issues**
 
 ### [GAS-1]  Avoid contract existence checks by using low level calls
 Prior to 0.8.10 the compiler inserted extra code, including EXTCODESIZE (100 gas), to check for contract existence for external function calls. In more recent solidity versions, the compiler will not insert these checks if the external call has a return value. Similar behavior can be achieved in earlier versions by using low-level calls, since low level calls never check for contract existence
@@ -112,20 +111,8 @@ https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES
 
 https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L188
 
-### [G‑4] Splitting require() statements that use && saves gas
-See this issue which describes the fact that there is a larger deployment gas cost, but with enough runtime calls, the change ends up being cheaper by 3 gas
 
-*Instances (4)*:
-
-https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L910
-
-https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L917
-
-https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L926
-
-https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1834
-
-### [G‑5] Using calldata instead of memory in external functions saves gas
+### [G‑4] Using calldata instead of memory in external functions saves gas
 When a function with a memory array is called externally, the abi.decode() step has to use a for-loop to copy each index of the calldata to the memory index. Each iteration of this for-loop costs at least 60 gas (i.e. 60 * <mem_array>.length). Using calldata directly, obliviates the need for such a loop in the contract code and runtime execution. Note that even if an interface defines a function as having memory arguments, it’s still valid for implementation contracs to use calldata arguments instead.
 
 *Instances (9)*:
@@ -148,7 +135,7 @@ https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTo
 
 https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1820
 
-### [G‑6] Multiple accesses of a mapping/array should use a local variable cache
+### [G‑5] Multiple accesses of a mapping/array should use a local variable cache
 The instances below point to the second+ access of a value inside a mapping/array, within a function. Caching a mapping’s value in a local storage or calldata variable when the value is accessed multiple times, saves ~42 gas per access due to not having to recalculate the key’s keccak256 hash (Gkeccak256 - 30 gas) and that calculation’s associated stack operations. Caching an array’s struct avoids recalculating the array offsets into memory/calldata
 
 *Instances (24)*:
@@ -202,7 +189,7 @@ https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTo
 https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1830
 
 
-### [G‑7] State variables should be cached in stack variables rather than re-reading them from storage
+### [G‑6] State variables should be cached in stack variables rather than re-reading them from storage
 The instances below point to the second+ access of a state variable within a function. Caching of a state variable replaces each Gwarmaccess (100 gas) with a much cheaper stack read. Other less obvious fixes/optimizations include having local memory caches of state variable structs, or having local caches of state variable contracts/addresses.
 
 *Instances (10)*:
