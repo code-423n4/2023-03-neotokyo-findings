@@ -195,3 +195,4 @@ When dividing two integers, the result is rounded down to the nearest integer. T
 **contracts\staking\NeoTokyoStaker.sol**
 
     1155: uint256 points = amount * 100 / 1e18 * timelockMultiplier / _DIVISOR;
+    1676: uint256 points = amount * 100 / 1e18 * lpPosition.multiplier / _DIVISOR;
