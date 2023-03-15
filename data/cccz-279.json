@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "cccz",
+  "risk": "2",
+  "title": "When pool.rewardWindows[0].startTime != 0, getPoolReward will overflow, resulting in failure to claim the reward",
+  "issueId": 279,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/279"
+}
