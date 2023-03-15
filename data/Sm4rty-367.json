@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "Sm4rty",
+  "risk": "2",
+  "title": "upgradeBytes() functon doesn't allows user to upgrade their entire bytes1 token to bytes2 token",
+  "issueId": 367,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/367"
+}
