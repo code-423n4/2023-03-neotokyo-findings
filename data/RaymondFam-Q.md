@@ -25,6 +25,47 @@ For example, the following two instances may be refactored as follows:
 [File: NeoTokyoStaker.sol#L1373](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1373)
 
 ```diff
--					Otherwise, the last reward rate, and therefore the entireity of 
-+					Otherwise, the last reward rate, and therefore the entirety of 
+-	Otherwise, the last reward rate, and therefore the entireity of 
++	Otherwise, the last reward rate, and therefore the entirety of 
+```
+## Comment and code mismatch
+In BYTES2.sol, the comment for `_bytes` (that is supposedly assigned to `BYTES1`) mistakenly relates to the BYTES 2.0 `(instead of 1.0)` ERC-20 token contract. Consider having the comment corrected as follows:
+
+[File: BYTES2.sol#L70](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L70)
+
+```diff
+-	@param _bytes The address of the BYTES 2.0 ERC-20 token contract.
++	@param _bytes The address of the BYTES 1.0 ERC-20 token contract.
+```
+## Gas griefing/theft is possible on unsafe external call
+`return` data (bool success,) has to be stored due to EVM architecture, if in a usage like below, ‘out’ and ‘outsize’ values are given (0,0). Thus, this storage disappears and may come from external contracts a possible gas grieving/theft problem is avoided as denoted in the link below:
+
+https://twitter.com/pashovkrum/status/1607024043718316032?t=xs30iD6ORWtE2bTTYsCFIQ&s=19
+
+Here are the two instances entailed:
+
+[File: NeoTokyoStaker.sol#L772-L780](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L772-L780)
+
+```solidity
+            (bool success, bytes memory data) = 
+			_asset.call(
+				abi.encodeWithSelector(
+					_TRANSFER_FROM_SELECTOR,
+					_from,
+					_to, 
+					_idOrAmount
+				)
+			);
+```
+[File: NeoTokyoStaker.sol#L801-L808](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L801-L808)
+
+```solidity
+        (bool success, bytes memory data) = 
+			_asset.call(
+				abi.encodeWithSelector(
+					_TRANSFER_SELECTOR,
+					_to, 
+					_amount
+				)
+			);
 ```
