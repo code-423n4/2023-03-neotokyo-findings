@@ -92,7 +92,7 @@ If we tweak the test so that Bob stakes 1/1000 of that amount (`0.01e18`), the r
 
 However, if we tweak further the test so that Bob stakes `0.0099999e18`, the result is 0 point. It would've been legitimate to believe that the minimum would've been `0.0025e18` for 1 point but it instead directly drops to 0 under `0.01e18`.
 
-While this is an edge case that may seem negligible, it shouldn't be possible for the user to stake his LP tokens and not earn anything in return.
+While this is an edge case that may seem negligible, it shouldn't be possible for the user to stake his LP tokens and not earn anything in return. This is especially true as, here, `points` aren't called `bonusPoints` like in [`_stakeBytes`](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1077-L1080) .
 
 Additionally, each point is actually [worth `200 * 1e18` BYTES](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L203), so not being able to earn below 4 points here might be unexpected.
 
