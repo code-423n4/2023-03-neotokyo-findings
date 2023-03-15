@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "rbserver",
+  "risk": "2",
+  "title": "Unbounded `_stakerS1Position` and `_stakerS2Position` can eventually DOS staking and withdrawal functionalities",
+  "issueId": 383,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/383"
+}
