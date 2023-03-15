@@ -1,3 +1,32 @@
+# No check if same length in functions with arrays as its parameter
+
+The 
+- `configureVaultCreditMultipliers()`
+- `configureTimelockOptions()`
+- `configureIdentityCreditYields()`
+- `configureIdentityCreditPoints()`
+
+Those function in `NeoTokyoStaker.sol` doesn't check the (array) input if it contains same length.
+
+```solidity
+File: NeoTokyoStaker.sol
+1802: 	function configureVaultCreditMultipliers (
+1803: 		string[] memory _vaultCreditMultipliers,
+1804: 		uint256[] memory _multipliers
+1805: 	) hasValidPermit(UNIVERSAL, CONFIGURE_CREDITS) external {
+1806: 		for (uint256 i; i < _vaultCreditMultipliers.length; ) {
+1807: 			vaultCreditMultiplier[_vaultCreditMultipliers[i]] = _multipliers[i];
+1808: 			unchecked { ++i; }
+1809: 		}
+1810: 	}
+```
+
+To prevent any misconfiguration or invalid behaviour we can make sure the length of both array equals by adding, for example:
+
+```js
+require(_vaultCreditMultipliers.length == _multipliers.length);
+```
+
 # Doesn't check if `_amount` > 0
 
 In `Bytes2.sol` file, there are some function which doesn't check if `_amount` is > 0. By adding this required condition, we can prevent any unnecessary transaction, thus if the `_amount` is 0 it will simply revert.
@@ -58,28 +87,7 @@ File: BYTES2.sol
 177: 	}
 ```
 
-# No check if same length in `configureVaultCreditMultipliers`
 
-The `configureVaultCreditMultipliers()` function in `NeoTokyoStaker.sol` doesn't check both of the (array) input if it contains same length.
-
-```solidity
-File: NeoTokyoStaker.sol
-1802: 	function configureVaultCreditMultipliers (
-1803: 		string[] memory _vaultCreditMultipliers,
-1804: 		uint256[] memory _multipliers
-1805: 	) hasValidPermit(UNIVERSAL, CONFIGURE_CREDITS) external {
-1806: 		for (uint256 i; i < _vaultCreditMultipliers.length; ) {
-1807: 			vaultCreditMultiplier[_vaultCreditMultipliers[i]] = _multipliers[i];
-1808: 			unchecked { ++i; }
-1809: 		}
-1810: 	}
-```
-
-To prevent any misconfiguration or invalid behaviour we can make sure the length of both array equals by adding, for example:
-
-```js
-require(_vaultCreditMultipliers.length == _multipliers.length);
-```
 
 # Not using named import
 
