@@ -5,7 +5,7 @@
 |[QA-1]| Lack of check of zero values in staking and withdrawing of LP and staking of Bytes |
 |[QA-2]| Adding user based total points |
 |[QA-3]| Use array inputs for stake and withdraw |
-|[QA-4]| Unecessary sanity check for argument |
+|[QA-4]| Unnecessary sanity check for argument |
 |[QA-5]| Active pool should be inclusive for the time it starts at |
 
 ### [QA-1] Lack of check of zero values in staking and withdrawing of LP and staking of Bytes
@@ -273,7 +273,7 @@ In getPoolReward, there is an excessive iteration through the tokens staked to c
     }
 ```
 
-### [QA-4] Unecessary sanity check for argument
+### [QA-4] Unnecessary sanity check for argument
 
 - There are unecessary sanity checks, in the case of enum argument, the compiler automatically ensures that the value being inputted is a valid value, the following checks are not needed:
 
