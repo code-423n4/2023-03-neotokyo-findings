@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "MadWookie",
+  "risk": "3",
+  "title": "A LP staker can underflow stakerLPPosition.points and mint a massive amount of BYTES2",
+  "issueId": 254,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/254"
+}
