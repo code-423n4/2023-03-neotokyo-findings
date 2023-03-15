@@ -1,0 +1,8 @@
+The withdrawal logic of the three functions:
+1.`_withdrawS1Citizen()` ref:https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1459-L1529
+2.`_withdrawS2Citizen()` ref:https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1534-L1592
+3.`_withdrawLP()`  ref:https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1597-L1644
+in the contract NeoTokyoStaker does not conform to the CEI model, namely: Checks, Effects, Interactions(CEI). The operation of `_assetTransfer` or `_assetTransferFrom` should be placed at the end of the function to ensure that no matter whether the LP contract address or the S1_CITIZEN/S2_CITIZEN contract address in NeoTokyoStaker is changed in the future, there will be no reentrancy attack.
+Detailed reference on CEI's development model: https://fravoll.github.io/solidity-patterns/checks_effects_interactions.html
+
+The NeoTokyo administrator sets the correct LP, S1_CITIZEN, S2_CITIZEN contract addresses so that there will be no re-entry attacks. Submit it as a QA Report to point out the re-entry attacks caused by some upgrade contracts that may be ignored in the future. And the optimization of the code only needs to be modified according to the CEI mode, and does not involve major changes.
