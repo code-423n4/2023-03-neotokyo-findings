@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "Go-Langer",
+  "risk": "2",
+  "title": "Integer Overflow and Underflow after calculation",
+  "issueId": 379,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/379"
+}
