@@ -219,7 +219,7 @@ The value of _lp input parameter is not checked if it is a valid contract or if 
 ## Resolution
 Implement checks for the _lp input parameter like codesize checks and not equal to address(0).
 
-# [N-07] Functions called by privileged users and make significant changes to the contract should emit events.
+# [N-07] Functions called by privileged users and that make significant changes to the contract state variables should emit events.
 ## Context 
 https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol#L173
 ```function changeTreasuryContractAddress (```
@@ -243,7 +243,7 @@ https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062
 ```function configureIdentityCreditYields (```
 
 https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1737
-``function configureTimelockOptions (```
+```function configureTimelockOptions (```
 
 https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1721
 ```function lockLP () external hasValidPermit(UNIVERSAL, CONFIGURE_LP) {```
@@ -251,7 +251,7 @@ https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062
 https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1708
 ```function configureLP (```
 ## Description
-Functions called by privileged users and make significant changes to the contract should emit events.
+Functions called by privileged users and that make significant changes to the contract state variables should emit events.
 
 ## Resolution
 Implement functions to emit events.
