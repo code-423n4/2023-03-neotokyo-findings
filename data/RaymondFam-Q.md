@@ -99,3 +99,74 @@ Here are the two instances entailed:
 +		uint256 _timelock
 	) private {
 ```
+## Inadequate NatSpec
+Solidity contracts can use a special form of comments, i.e., the Ethereum Natural Language Specification Format (NatSpec) to provide rich documentation for functions, return variables and more. Please visit the following link for further details:
+
+https://docs.soliditylang.org/en/v0.8.16/natspec-format.html
+
+Consider fully equipping all contracts with complete set of NatSpec to better facilitate users/developers interacting with the protocol's smart contracts.
+
+For example, the following function instance has missing `@return`:
+
+[File: NeoTokyoStaker.sol#L1257-L1267](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1257-L1267)
+
+```solidity
+	/**
+		This function supports retrieving the reward and tax earned by a particular 
+		`_recipient` on a specific pool of type `_assetType`.
+		@param _assetType The type of the asset to calculate rewards for.
+		@param _recipient The recipient of the reward.
+	*/
+	function getPoolReward (
+		AssetType _assetType,
+		address _recipient
+	) public view returns (uint256, uint256) {
+```
+## Use `delete` to clear variables
+`delete a` assigns the initial value for the type to `a`. i.e. for integers it is equivalent to `a = 0`, but it can also be used on arrays, where it assigns a dynamic array of length zero or a static array of the same length with all elements reset. For structs, it assigns a struct with all members reset. Similarly, it can also be used to set an address to zero address or a boolean to false. It has no effect on whole mappings though (as the keys of mappings may be arbitrary and are generally unknown). However, individual keys and what they map to can be deleted: If `a` is a mapping, then `delete a[x]` will delete the value stored at x.
+
+The delete key better conveys the intention and is also more idiomatic.
+
+For instance, the `a[x] = 0` and `b[x] = false` instances below may be refactored as follows:
+
+[File: NeoTokyoStaker.sol#L1517-L1521](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1517-L1521)
+
+```diff
+-		stakedCitizen.stakedBytes = 0;
++		delete stakedCitizen.stakedBytes;
+-		stakedCitizen.timelockEndTime = 0;
++		delete stakedCitizen.timelockEndTime;
+-		stakedCitizen.points = 0;
++		delete stakedCitizen.points;
+-		stakedCitizen.hasVault = false;
++		delete stakedCitizen.hasVault;
+-		stakedCitizen.stakedVaultId = 0;
++		delete stakedCitizen.stakedVaultId;
+```
+## Tokens accidentally sent to the contract cannot be recovered
+It is deemed unrecoverable if the tokens accidentally arrive at the contract addresses, which has happened to many popular projects. Consider adding a recovery code to your critical contracts.
+
+## Project Upgrade and Stop Scenario
+At the start of the project, the system may need to be stopped or upgraded. Consider having a script beforehand and add it to the documentation. This can also be called an ” EMERGENCY STOP (CIRCUIT BREAKER) PATTERN “.
+
+## Non-compliant contract layout with Solidity's Style Guide
+According to Solidity's Style Guide below:
+
+https://docs.soliditylang.org/en/v0.8.17/style-guide.html
+
+In order to help readers identify which functions they can call, and find the constructor and fallback definitions more easily, functions should be grouped according to their visibility and ordered in the following manner:
+
+constructor, receive function (if exists), fallback function (if exists), external, public, internal, private
+
+And, within a grouping, place the `view` and `pure` functions last.
+
+Additionally, inside each contract, library or interface, use the following order:
+
+type declarations, state variables, events, modifiers, functions
+
+Consider adhering to the above guidelines for all contract instances entailed.
+
+## Lack of events for critical operations
+Critical operations not triggering events will make it difficult to review the correct behavior of the deployed contracts. Users and blockchain monitoring systems will not be able to detect suspicious behaviors at ease without events. 
+
+Consider adding events where appropriate for all critical operations for better support of off-chain logging API, specifically on the administrative configurable functions.
