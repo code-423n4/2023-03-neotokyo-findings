@@ -141,7 +141,6 @@ Can be replaced by:
     function equal(string memory a, string memory b) internal pure returns (bool) {
         return keccak256(bytes(a)) == keccak256(bytes(b));
     }
-
 ```
 ---
 
@@ -160,3 +159,12 @@ contracts/staking/NeoTokyoStaker.sol
 1669:			revert InvalidAssetType(uint256(_assetType));
 1670:		}
 ```
+
+## Using an outdated and non-fixed version of OpenZeppelin
+```json
+package.json
+
+23:  "@openzeppelin/contracts": "^4.3.1",
+```
+At the moment, the latest version is 4.8.2, which includes various bug fixes and major optimizations
+Using a non-fixed version can also cause the bytecode of the deployed contract to differ from what is in the repository
