@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "rbserver",
+  "risk": "2",
+  "title": "Newly staked LP tokens' end time can overwrite previously staked LP tokens' end time",
+  "issueId": 384,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/384"
+}
