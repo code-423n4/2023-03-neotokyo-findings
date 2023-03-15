@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "minhquanym",
+  "risk": "3",
+  "title": "Attacker can abuse rounding down to get reward without depositing anything in LP pool",
+  "issueId": 348,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/348"
+}
