@@ -1,15 +1,7 @@
 # QA Report for Ethos Reserve contest
 
 ## Overview
-During the audit, 1 low, 1 non-critical and 2 refactoring issues were found.
-
-### Low Risk Issues
-
-Total: 1 issues
-
-|#|Issue|
-|-|:-|
-| [L-01] | Users reward withdraws may be front run, leading to reward loss |
+During the audit, 2 non-critical and 2 refactoring issues were found.
 
 ### Non-critical Issues
 
@@ -18,6 +10,7 @@ Total: 2 instances over 1 issues
 |#|Issue|Instances|
 |-|:-|:-:|
 | [NC-01]| Enum AssetType range validations are incorrect | 2 |
+| [NC-02]| No support for Uniswap V3 LP staking when BYTESv1 uses a V3 pool | 1 |
 
 ### Refactoring Issues
 
@@ -29,37 +22,9 @@ Total: 5 instances over 2 issues
 | [R-02]| Use constants for values with special meaning | 3 |
 
 #
-## Low Risk Issues (1)
-#
 
-### [L-01] Users reward withdraws may be front run, leading to reward loss
 
-##### Description
-
-Rewards are distributed to users by calling `getReward` from `BYTES2.sol`. This function further calls `claimReward` from `NeoTokyoStaker` to determin the user BYTES to be minted and the DAO's.
-
-`claimReward` flows exectuion to `getPoolReward` where the amount is determined as:
-
-https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol#L1388-L1392sol#L1388
-```Solidity
-	uint256 share = points * _PRECISION / pool.totalPoints * totalReward;
-	uint256 daoShare = share * pool.daoTax / (100 * _DIVISOR);
-	share /= _PRECISION;
-	daoShare /= _PRECISION;
-	return ((share - daoShare), daoShare);
-```
-
-we can see that user BYTES shares also depend on the `pool.totalPoints` size of the specific asset pool.  The higher the value, the less BYTES are due, which is normal for a staking protocol. After each reward distribution, a time variable is also set, to mark the last user reward date.
-
-The issue with this reward collecting mechanism is the timing. If a user has not claimed in a a long period and wishes to do so now, an ill intoned attacker can front Ron the `getReward` operation and deposit into the pool. This increases the total amount of points in the pool thus giving a lower then expected value to user. The less then expected value is relative to what the user would have gained if he would regularly claim rewards.
-
-The attacker gains nothing in this, also he is further required to actually stake the assets, for a minimum of 30 days also. This however does cause damage to the user and loss of rewards. It is also very easy for an attack to execute it.
-
-##### Recommendation
-
-This is an issue by design, besides a system redesign, user can mitigate this by frequently calling the `getReward` function.
-
-## Non-critical Issues (1)
+## Non-critical Issues (2)
 #
 
 ### [NC-01] Enum AssetType range validations are incorrect
@@ -83,7 +48,7 @@ There are several places in code, where this is an input for external functions 
 ```
 
 In Solidity, Enums start from 0: https://docs.soliditylang.org/en/v0.8.19/types.html#enums
-The check `uint8(_assetType) > 4)` should be modified to `uint8(_assetType) > 3)` as it allows the unmapped value 4 to be considered valid.
+The check `uint8(_assetType) > 4)` should be modified to `uint8(_assetType) > 3)` as it allowes the unmapped value 4 to be considered valid.
 
 This does not impact code as there are other checks that invalidate this issue (also see `[R-01]`)
 
@@ -96,6 +61,28 @@ https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTo
 ##### Recommendation
 
 Modify `uint8(_assetType) > 4)` to `uint8(_assetType) > 3)` or simply remove the check (as suggested in `[R-01]`)
+
+
+### [NC-02] No support for Uniswap V3 LP staking when BYTESv1 uses a V3 pool
+##### Description
+
+The `BYTESv2` staking contract is designed to use Uniswap V2 compatible LP tokens only and doesn't not support V3 LP staking (ERC721 LP tokens).
+Normally, this would not be mentioned as an issue, but the current `BYTESv1` liquidity is set in a Uniswap V3 LP pool. 
+These types of features are usually kept as they are at protocol level.
+
+##### Instances (1)
+
+https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/NeoTokyoStaker.sol
+
+##### Recommendation
+
+Reconsider if downgrading to a V2 LP staking is what it is best for the protocol in terms of consistency.
+Document the decision.
+
+#
+#### Refactoring Issues ([F])
+#
+
 
 #
 #### Refactoring Issues (2)
