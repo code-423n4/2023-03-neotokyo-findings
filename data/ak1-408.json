@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "ak1",
+  "risk": "3",
+  "title": "_withdrawLP is not re-setting the lpPosition.points when lpPosition.amount",
+  "issueId": 408,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/408"
+}
