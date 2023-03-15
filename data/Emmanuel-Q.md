@@ -1,0 +1,1 @@
+getReward function in [BYTES2.sol](https://github.com/code-423n4/2023-03-neotokyo/blob/main/contracts/staking/BYTES2.sol) contract should be called only by S1 citizen contract but is callable by anyone as there are no access controls
