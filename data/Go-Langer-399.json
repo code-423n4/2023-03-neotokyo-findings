@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "Go-Langer",
+  "risk": "3",
+  "title": "Users cant withdraw S1 or S2 Citizens if no timelockEndTime is associated with it",
+  "issueId": 399,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/399"
+}
