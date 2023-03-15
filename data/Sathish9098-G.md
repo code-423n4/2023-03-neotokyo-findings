@@ -30,9 +30,15 @@ ou can cut out 10 opcodes in the creation-time EVM bytecode if you declare a con
 
 FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
-   75 : constructor (
+     75 : constructor (
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L75)
+[staking/BYTES2.sol#L75](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L75)
+
+FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
+
+    588: constructor (
+
+[NeoTokyoStaker.sol#L588](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L588)
 
 ##
 
@@ -50,23 +56,23 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
         40: bytes32 public constant ADMIN = keccak256("ADMIN");
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L37-L40)
+[BYTES2.sol#L37-L40](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L37-L40)
 
 FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
-   206: bytes32 public constant CONFIGURE_LP = keccak256("CONFIGURE_LP");
+     206: bytes32 public constant CONFIGURE_LP = keccak256("CONFIGURE_LP");
 
-   209: bytes32 public constant CONFIGURE_TIMELOCKS = keccak256(
+     209: bytes32 public constant CONFIGURE_TIMELOCKS = keccak256(
 		"CONFIGURE_TIMELOCKS"
 	);
 
-   214: bytes32 public constant CONFIGURE_CREDITS = keccak256("CONFIGURE_CREDITS");
+     214: bytes32 public constant CONFIGURE_CREDITS = keccak256("CONFIGURE_CREDITS");
 
-   217: bytes32 public constant CONFIGURE_POOLS = keccak256("CONFIGURE_POOLS");
+     217: bytes32 public constant CONFIGURE_POOLS = keccak256("CONFIGURE_POOLS");
 
-   220: bytes32 public constant CONFIGURE_CAPS = keccak256("CONFIGURE_CAPS");
+    220: bytes32 public constant CONFIGURE_CAPS = keccak256("CONFIGURE_CAPS");
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L206-L220)
+[NeoTokyoStaker.sol#L206-L220](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L206-L220)
 
 
 
@@ -76,33 +82,33 @@ Saves a storage slot for the mapping. Depending on the circumstances and sizes o
 
 FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
-  316: mapping ( AssetType => PoolData ) private _pools;
+    316: mapping ( AssetType => PoolData ) private _pools;
 
-  319: mapping ( address => mapping ( AssetType => uint256 )) public lastRewardTime;
+    319: mapping ( address => mapping ( AssetType => uint256 )) public lastRewardTime;
 
-  326: mapping ( uint256 => mapping ( string => string )) public identityCreditYield;
+    326: mapping ( uint256 => mapping ( string => string )) public identityCreditYield;
 
-  329: mapping ( string => uint256 ) public identityCreditPoints;
+    329: mapping ( string => uint256 ) public identityCreditPoints;
 
-  332: 	mapping ( string => uint256 ) public vaultCreditMultiplier;
+    332:  mapping ( string => uint256 ) public vaultCreditMultiplier;
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L316-L332)
+[NeoTokyoStaker.sol#L316-L332](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L316-L332)
 
    372 : mapping ( address => mapping( uint256 => StakedS1Citizen )) public stakedS1;
 
    378:  mapping ( address => uint256[] ) private _stakerS1Position;
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L372-L378)
+[NeoTokyoStaker.sol#L372-L378](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L372-L378)
 
    405: mapping ( address => mapping( uint256 => StakedS2Citizen )) public stakedS2;
 
    411: mapping ( address => uint256[] ) private _stakerS2Position;
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L405-L411)
+[NeoTokyoStaker.sol#L405-L411](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L405-L411)
 
    434: mapping ( address => LPPosition ) public stakerLPPosition;
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L434)
+[NeoTokyoStaker.sol#L434](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L434)
 
 ##
 
@@ -146,43 +152,43 @@ FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
       uint256 citizenId = _stakerS1Position[_staker][i];
       StakedS1Citizen memory citizenDetails = stakedS1[_staker][citizenId];
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L717-L719)
+[NeoTokyoStaker.sol#L717-L719](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L717-L719)
 
      for (uint256 i; i < _stakerS2Position[_staker].length; ) {
      uint256 citizenId = _stakerS2Position[_staker][i];
      StakedS2Citizen memory citizenDetails = stakedS2[_staker][citizenId];
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L734-L736)
+[NeoTokyoStaker.sol#L734-L736](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L734-L736)
 
   
      for (uint256 i; i < _stakerS1Position[_recipient].length; ) {
      uint256 citizenId = _stakerS1Position[_recipient][i];
      StakedS1Citizen memory s1Citizen = stakedS1[_recipient][citizenId];
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1279-L1281)
+[NeoTokyoStaker.sol#L1279-L1281](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1279-L1281)
 
     for (uint256 i; i < _stakerS2Position[_recipient].length; ) {
     uint256 citizenId = _stakerS2Position[_recipient][i];
     StakedS2Citizen memory s2Citizen = stakedS2[_recipient][citizenId];
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1288-L1290)
+[NeoTokyoStaker.sol#L1288-L1290](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1288-L1290)
 
-   for (uint256 i; i < windowCount; ) {
-   RewardWindow memory window = pool.rewardWindows[i];
+    for (uint256 i; i < windowCount; ) {
+    RewardWindow memory window = pool.rewardWindows[i];
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1312-L1313)
+[NeoTokyoStaker.sol#L1312-L1313](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1312-L1313)
 
-   1320 : uint256 currentRewardRate = pool.rewardWindows[i - 1].reward;
+     1320 : uint256 currentRewardRate = pool.rewardWindows[i - 1].reward;
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1320)
+[NeoTokyoStaker.sol#L1320](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1320)
 
-  1331: uint256 timeSinceReward = block.timestamp - lastPoolRewardTime;
+     1331: uint256 timeSinceReward = block.timestamp - lastPoolRewardTime;
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1331)
+[NeoTokyoStaker.sol#L1331](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1331)
 
-  1342: uint256 timeSinceReward = window.startTime - lastPoolRewardTime;
+    1342: uint256 timeSinceReward = window.startTime - lastPoolRewardTime;
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1342)
+[NeoTokyoStaker.sol#L1342](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1342)
 
 ##
 
@@ -192,17 +198,17 @@ Using nested is cheaper than using && multiple check combinations. There are mor
 
 FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
-   910: if (citizenVaultId != 0 && vaultId != 0) {
+     910: if (citizenVaultId != 0 && vaultId != 0) {
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L910)
+[NeoTokyoStaker.sol#L910] (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L910)
 
-   917: } else if (citizenVaultId != 0 && vaultId == 0) {
+     917: } else if (citizenVaultId != 0 && vaultId == 0) {
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L917)
+[NeoTokyoStaker.sol#L917](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L917)
 
-   926: } else if (citizenVaultId == 0 && vaultId != 0) {
+     926: } else if (citizenVaultId == 0 && vaultId != 0) {
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L926)
+[NeoTokyoStaker.sol#L926](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L926)
 
 ##
 
@@ -214,23 +220,23 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 
         40: bytes32 public constant ADMIN = keccak256("ADMIN");
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L37-L40)
+[BYTES2.sol#L37-L40](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L37-L40)
 
 FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
-   206: bytes32 public constant CONFIGURE_LP = keccak256("CONFIGURE_LP");
+     206: bytes32 public constant CONFIGURE_LP = keccak256("CONFIGURE_LP");
 
-   209: bytes32 public constant CONFIGURE_TIMELOCKS = keccak256(
+     209: bytes32 public constant CONFIGURE_TIMELOCKS = keccak256(
 		"CONFIGURE_TIMELOCKS"
 	);
 
-   214: bytes32 public constant CONFIGURE_CREDITS = keccak256("CONFIGURE_CREDITS");
+     214: bytes32 public constant CONFIGURE_CREDITS = keccak256("CONFIGURE_CREDITS");
 
-   217: bytes32 public constant CONFIGURE_POOLS = keccak256("CONFIGURE_POOLS");
+     217: bytes32 public constant CONFIGURE_POOLS = keccak256("CONFIGURE_POOLS");
 
-   220: bytes32 public constant CONFIGURE_CAPS = keccak256("CONFIGURE_CAPS");
+     220: bytes32 public constant CONFIGURE_CAPS = keccak256("CONFIGURE_CAPS");
 
-(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L206-L220)
+[NeoTokyoStaker.sol#L206-L220](https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L206-L220)
 
 ##
 
@@ -240,11 +246,11 @@ Using the addition/Subtraction operator instead of plus-equals/minus-equals save
 
 FILE : 2023-03-neotokyo/contracts/staking/NeoTokyoStaker.sol
 
-  977: pool.totalPoints += citizenStatus.points;
+     977: pool.totalPoints += citizenStatus.points;
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L977)
 
-   1029 : pool.totalPoints += citizenStatus.points;
+     1029 : pool.totalPoints += citizenStatus.points;
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1029)
 
@@ -804,6 +810,32 @@ FILE : 2023-03-neotokyo/contracts/staking/BYTES2.sol
 	}
 
 (https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/BYTES2.sol#L189-L194)
+
+##
+
+### [G-25] Add unchecked {} for subtractions where the operands cannot underflow because of a previous require() or if-statement
+
+windowCount - 1 is not possible to overflow . We already checked the value in for loop 
+
+       1353: if (j == windowCount - 1) {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1353)
+
+     1376: } else if (i == windowCount - 1) {
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1376)
+
+    1503: if (stakedIndex != oldPosition.length - 1) {
+    1504: oldPosition[stakedIndex] = oldPosition[oldPosition.length - 1];
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1503)
+
+     1568: if (stakedIndex != oldPosition.length - 1) {
+     1569: oldPosition[stakedIndex] = oldPosition[oldPosition.length - 1]; 
+
+(https://github.com/code-423n4/2023-03-neotokyo/blob/dfa5887062e47e2d0c801ef33062d44c09f6f36e/contracts/staking/NeoTokyoStaker.sol#L1568-L1569)
+
+   
    
 
 
