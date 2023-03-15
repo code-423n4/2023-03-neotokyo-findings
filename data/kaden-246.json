@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "kaden",
+  "risk": "2",
+  "title": "Looping over reward windows may result in DoS by block gas limit",
+  "issueId": 246,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/246"
+}
