@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "auditor0517",
+  "risk": "2",
+  "title": "Dust points would remain after withdrawing all `LP` due to the rounding",
+  "issueId": 323,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/323"
+}
