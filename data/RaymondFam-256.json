@@ -1,0 +1,8 @@
+{
+  "contest": 220,
+  "handle": "RaymondFam",
+  "risk": "3",
+  "title": "Erroneous implementation of `_timelock >> 128`",
+  "issueId": 256,
+  "issueUrl": "https://github.com/code-423n4/2023-03-neotokyo-findings/issues/256"
+}
